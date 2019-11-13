@@ -1,0 +1,11 @@
+# Visual Studio
+*.csproj.user
+Resources/Resource.Designer.cs
+.vs/
+bin/
+obj/
+packages/
+out/
+
+# Python
+*.pyc
