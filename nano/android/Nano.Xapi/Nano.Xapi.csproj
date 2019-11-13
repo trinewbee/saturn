@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{BE3642E8-D0CC-4029-BB16-5B036F706941}</ProjectGuid>
+    <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Nano.Xapi</RootNamespace>
+    <AssemblyName>Nano.Xapi</AssemblyName>
+    <TargetFrameworkVersion>v6.0</TargetFrameworkVersion>
+    <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
+    <AndroidResgenClass>Resource</AndroidResgenClass>
+    <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
+    <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
+    <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <AndroidLinkMode>None</AndroidLinkMode>
+    <AndroidSupportedAbis>arm64-v8a;armeabi;armeabi-v7a;x86</AndroidSupportedAbis>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="Mono.Android" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Resources\Resource.designer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Netdisk\XAgent.cs" />
+    <Compile Include="Netdisk\XSvr.cs" />
+    <Compile Include="Netdisk\Api\IACLModule.cs" />
+    <Compile Include="Netdisk\Api\IAuditModule.cs" />
+    <Compile Include="Netdisk\Api\IAuthModule.cs" />
+    <Compile Include="Netdisk\Api\IPathFileSystem.cs" />
+    <Compile Include="Netdisk\Api\IQuotaModule.cs" />
+    <Compile Include="Netdisk\Api\ISvrFileSystem.cs" />
+    <Compile Include="Netdisk\Api\IUserSystem.cs" />
+    <Compile Include="Netdisk\Api\XUfa.cs" />
+    <Compile Include="Netdisk\Common\Range.cs" />
+    <Compile Include="Netdisk\Config\Config.cs" />
+    <Compile Include="Netdisk\Error\XError.cs" />
+    <Compile Include="Netdisk\Error\XFatalException.cs" />
+    <Compile Include="Netdisk\Error\XStat.cs" />
+    <Compile Include="Netdisk\Impls\XACL.cs" />
+    <Compile Include="Netdisk\Impls\XAudit.cs" />
+    <Compile Include="Netdisk\Impls\XAuth.cs" />
+    <Compile Include="Netdisk\Impls\XFileSystem.cs" />
+    <Compile Include="Netdisk\Impls\XPathFileSystem.cs" />
+    <Compile Include="Netdisk\Impls\XQuota.cs" />
+    <Compile Include="Netdisk\Impls\XUfa.cs" />
+    <Compile Include="Netdisk\Impls\XUser.cs" />
+    <Compile Include="Netdisk\Model\NdAuthModel.cs" />
+    <Compile Include="Netdisk\Model\NdFileSystem.cs" />
+    <Compile Include="Netdisk\Model\NdPathFileSystem.cs" />
+    <Compile Include="Netdisk\Model\NdQuotaModel.cs" />
+    <Compile Include="Netdisk\Model\NdResponse.cs" />
+    <Compile Include="Netdisk\Model\NdUserModel.cs" />
+    <Compile Include="Netdisk\Protocal\XBaseClient.cs" />
+    <Compile Include="Netdisk\Protocal\XBaseRequest.cs" />
+    <Compile Include="Netdisk\Protocal\XBaseResponse.cs" />
+    <Compile Include="Netdisk\Protocal\XHttpClient.cs" />
+    <Compile Include="Netdisk\Protocal\XHttpMethod.cs" />
+    <Compile Include="Netdisk\Protocal\XHttpProxy.cs" />
+    <Compile Include="Netdisk\Protocal\XHttpRequest.cs" />
+    <Compile Include="Netdisk\Protocal\XHttpResponse.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AboutResources.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\values\Strings.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Nano.Common\Nano.Common.csproj">
+      <Project>{7D075141-CDC5-4149-B6CA-7F284C7042EA}</Project>
+      <Name>Nano.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Nano.Extensive\Nano.Extensive.csproj">
+      <Project>{33757AEF-949F-4459-84C0-14ADC83CB839}</Project>
+      <Name>Nano.Extensive</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
+</Project>

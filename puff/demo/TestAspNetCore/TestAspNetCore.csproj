@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\PuffNetCore\PuffNetCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Nano.Common">
+      <HintPath>..\..\..\..\shared\cs\netcoreapp2.2\Nano.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Nano.Extensive">
+      <HintPath>..\..\..\..\shared\cs\netcoreapp2.2\Nano.Extensive.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

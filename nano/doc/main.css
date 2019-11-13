@@ -1,0 +1,29 @@
+﻿h1, h2, h3 { font-family: Calibri }
+p, td, li { font-family: Cambria }
+h1           { font-size: 200%; color: #3366FF }
+h2           { font-size: 150%; color: #3366FF }
+h3           { font-size: 125%; color: #008080 }
+p, li, td  { font-size: 100% }
+p.remark     { font-size: 10pt; margin-top: 2pt; margin-bottom: 2pt }
+p.code       { font-family: Courier New }
+
+.tborder {
+	border-collapse: collapse;
+	border: 1px solid #0066FF;
+}
+.ctext {
+	border: 1px solid #0066FF;
+}
+.thead {
+	border: 1px solid #0066FF;
+	background-color: #99CCFF;
+}
+.chead-middle {
+	border: 1px solid #0066FF;
+	background-color: #99CCFF;
+	text-align: center;
+}
+.ctext-middle {
+	border: 1px solid #0066FF;
+	text-align: center;
+}

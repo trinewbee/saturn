@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A7264D99-C508-43B9-AEED-29DB05549DC4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Nano.Xapi</RootNamespace>
+    <AssemblyName>Nano.Xapi</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\out\gen\xdoc\Nano.Xapi.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Netdisk\Api\IACLModule.cs" />
+    <Compile Include="Netdisk\Api\IAuditModule.cs" />
+    <Compile Include="Netdisk\Api\IAuthModule.cs" />
+    <Compile Include="Netdisk\Api\IPathFileSystem.cs" />
+    <Compile Include="Netdisk\Api\IQuotaModule.cs" />
+    <Compile Include="Netdisk\Api\ISvrFileSystem.cs" />
+    <Compile Include="Netdisk\Api\IUserSystem.cs" />
+    <Compile Include="Netdisk\Api\XUfa.cs" />
+    <Compile Include="Netdisk\Common\Range.cs" />
+    <Compile Include="Netdisk\Config\Config.cs" />
+    <Compile Include="Netdisk\Error\XError.cs" />
+    <Compile Include="Netdisk\Error\XFatalException.cs" />
+    <Compile Include="Netdisk\Error\XStat.cs" />
+    <Compile Include="Netdisk\Impls\XACL.cs" />
+    <Compile Include="Netdisk\Impls\XAudit.cs" />
+    <Compile Include="Netdisk\Impls\XAuth.cs" />
+    <Compile Include="Netdisk\Impls\XPathFileSystem.cs" />
+    <Compile Include="Netdisk\Impls\XFileSystem.cs" />
+    <Compile Include="Netdisk\Impls\XQuota.cs" />
+    <Compile Include="Netdisk\Impls\XUfa.cs" />
+    <Compile Include="Netdisk\Impls\XUser.cs" />
+    <Compile Include="Netdisk\Model\NdAuthModel.cs" />
+    <Compile Include="Netdisk\Model\NdFileSystem.cs" />
+    <Compile Include="Netdisk\Model\NdPathFileSystem.cs" />
+    <Compile Include="Netdisk\Model\NdQuotaModel.cs" />
+    <Compile Include="Netdisk\Model\NdResponse.cs" />
+    <Compile Include="Netdisk\Model\NdUserModel.cs" />
+    <Compile Include="Netdisk\Protocal\XBaseClient.cs" />
+    <Compile Include="Netdisk\Protocal\XBaseRequest.cs" />
+    <Compile Include="Netdisk\Protocal\XBaseResponse.cs" />
+    <Compile Include="Netdisk\Protocal\XHttpClient.cs" />
+    <Compile Include="Netdisk\Protocal\XHttpMethod.cs" />
+    <Compile Include="Netdisk\Protocal\XHttpProxy.cs" />
+    <Compile Include="Netdisk\Protocal\XHttpRequest.cs" />
+    <Compile Include="Netdisk\Protocal\XHttpResponse.cs" />
+    <Compile Include="Netdisk\XAgent.cs" />
+    <Compile Include="Netdisk\XSvr.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Nano.Common\Nano.Common.csproj">
+      <Project>{87bc01ef-310d-40b0-a9e8-0082c8654492}</Project>
+      <Name>Nano.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Nano.Extensive\Nano.Extensive.csproj">
+      <Project>{281771d7-3a3c-4ea9-8e2c-db970ad608ea}</Project>
+      <Name>Nano.Extensive</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

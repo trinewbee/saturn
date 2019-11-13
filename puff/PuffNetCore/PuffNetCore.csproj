@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp2.2;netcoreapp3.0</TargetFrameworks>
+    <Authors>Cloudhua</Authors>
+    <PackageId>Cloudhua.PuffNetCore</PackageId>
+    <Description>PuffServer是基于aspnet上开发的web应用服务</Description>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.1</Version>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.2' ">
+    <Reference Include="Nano.Common">
+      <HintPath>..\..\..\shared\cs\netcoreapp2.2\Nano.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Nano.Extensive">
+      <HintPath>..\..\..\shared\cs\netcoreapp2.2\Nano.Extensive.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.0' ">
+    <Reference Include="Nano.Common">
+      <HintPath>..\..\..\shared\cs\netcoreapp3.0\Nano.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Nano.Extensive">
+      <HintPath>..\..\..\shared\cs\netcoreapp3.0\Nano.Extensive.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\PuffServer\Marshal\Jmb.cs" Link="Jmb.cs" />
+    <Compile Include="..\PuffServer\Marshal\Job.cs" Link="Job.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+</Project>

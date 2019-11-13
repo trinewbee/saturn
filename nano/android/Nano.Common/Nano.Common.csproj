@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7D075141-CDC5-4149-B6CA-7F284C7042EA}</ProjectGuid>
+    <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Nano.Common</RootNamespace>
+    <AssemblyName>Nano.Common</AssemblyName>
+    <TargetFrameworkVersion>v6.0</TargetFrameworkVersion>
+    <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
+    <AndroidResgenClass>Resource</AndroidResgenClass>
+    <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
+    <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
+    <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <AndroidLinkMode>None</AndroidLinkMode>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="Mono.Android" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Resources\Resource.designer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="AppEnv\AppArguments.cs" />
+    <Compile Include="AppEnv\ValueBag.cs" />
+    <Compile Include="Collection\CollectionKit.cs" />
+    <Compile Include="Collection\ListSet.cs" />
+    <Compile Include="Collection\ListTable.cs" />
+    <Compile Include="Collection\LRUCachePool.cs" />
+    <Compile Include="Collection\RingBuffer.cs" />
+    <Compile Include="Common\FileWalker.cs" />
+    <Compile Include="Common\Time.cs" />
+    <Compile Include="Common\TreeWalker.cs" />
+    <Compile Include="Common\Values.cs" />
+    <Compile Include="Crypt\Crypto.cs" />
+    <Compile Include="Crypt\CryptStorageAccess.cs" />
+    <Compile Include="Json\JBuilder.cs" />
+    <Compile Include="Json\JException.cs" />
+    <Compile Include="Json\JExtention.cs" />
+    <Compile Include="Json\JFormater.cs" />
+    <Compile Include="Json\JNode.cs" />
+    <Compile Include="Json\JParser.cs" />
+    <Compile Include="Json\JSerialization.cs" />
+    <Compile Include="Json\JsonExpr.cs" />
+    <Compile Include="Json\JsonNode.cs" />
+    <Compile Include="Json\JsonWriter.cs" />
+    <Compile Include="Lexical\LexCommon.cs" />
+    <Compile Include="Lexical\LexParser.cs" />
+    <Compile Include="Log\FileLogger.cs" />
+    <Compile Include="Log\Log.cs" />
+    <Compile Include="Log\Logger.cs" />
+    <Compile Include="Net\WebClient.cs" />
+    <Compile Include="Storage\FileTreeWalk.cs" />
+    <Compile Include="Storage\LocalFileTreeAccess.cs" />
+    <Compile Include="Storage\SimpleKeyValueStorage.cs" />
+    <Compile Include="Storage\Storage.cs" />
+    <Compile Include="Storage\Common\InnerStream.cs" />
+    <Compile Include="Storage\Common\SimpleBlock.cs" />
+    <Compile Include="Storage\Common\SimpleBlockAccess.cs" />
+    <Compile Include="Xml\XmlConfigParser.cs" />
+    <Compile Include="Xml\XmlKit.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AboutResources.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\values\Strings.xml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
+</Project>

@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net472;netcoreapp2.2</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
+    <Reference Include="Nano.Common">
+      <HintPath>..\..\..\..\shared\cs\net472\Nano.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Nano.Extensive">
+      <HintPath>..\..\..\..\shared\cs\net472\Nano.Extensive.dll</HintPath>
+    </Reference>
+    <Reference Include="Nano.Sockets">
+      <HintPath>..\..\..\..\shared\cs\net472\Nano.Sockets.dll</HintPath>
+    </Reference>
+    <Reference Include="Nano.Test">
+      <HintPath>..\..\..\..\shared\cs\net472\Nano.Test.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.2' ">
+    <Reference Include="Nano.Common">
+      <HintPath>..\..\..\..\shared\cs\netcoreapp2.2\Nano.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Nano.Extensive">
+      <HintPath>..\..\..\..\shared\cs\netcoreapp2.2\Nano.Extensive.dll</HintPath>
+    </Reference>
+    <Reference Include="Nano.Sockets">
+      <HintPath>..\..\..\..\shared\cs\netcoreapp2.2\Nano.Sockets.dll</HintPath>
+    </Reference>
+    <Reference Include="Nano.Test">
+      <HintPath>..\..\..\..\shared\cs\netcoreapp2.2\Nano.Test.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Net" />
+  </ItemGroup>
+
+</Project>

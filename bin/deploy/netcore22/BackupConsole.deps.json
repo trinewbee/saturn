@@ -1,0 +1,114 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v2.2",
+    "signature": "ca4d19a2c48d9321f468f0fb720c839113eb00fe"
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v2.2": {
+      "BackupConsole/1.0.0": {
+        "dependencies": {
+          "BackupCore": "1.0.0",
+          "Nano.Common": "2.0.1.0",
+          "Nano.Extensive": "2.0.1.0"
+        },
+        "runtime": {
+          "BackupConsole.dll": {}
+        }
+      },
+      "AWSSDK.Core/3.3.101.17": {
+        "runtime": {
+          "lib/netstandard2.0/AWSSDK.Core.dll": {
+            "assemblyVersion": "3.3.0.0",
+            "fileVersion": "3.3.101.17"
+          }
+        }
+      },
+      "AWSSDK.S3/3.3.102.7": {
+        "dependencies": {
+          "AWSSDK.Core": "3.3.101.17"
+        },
+        "runtime": {
+          "lib/netstandard2.0/AWSSDK.S3.dll": {
+            "assemblyVersion": "3.3.0.0",
+            "fileVersion": "3.3.102.7"
+          }
+        }
+      },
+      "BackupCore/1.0.0": {
+        "dependencies": {
+          "AWSSDK.S3": "3.3.102.7",
+          "Podo.Main": "1.0.0"
+        },
+        "runtime": {
+          "BackupCore.dll": {}
+        }
+      },
+      "Podo.Main/1.0.0": {
+        "dependencies": {
+          "AWSSDK.S3": "3.3.102.7"
+        },
+        "runtime": {
+          "Podo.Main.dll": {}
+        }
+      },
+      "Nano.Common/2.0.1.0": {
+        "runtime": {
+          "Nano.Common.dll": {
+            "assemblyVersion": "2.0.1.0",
+            "fileVersion": "2.0.1.0"
+          }
+        }
+      },
+      "Nano.Extensive/2.0.1.0": {
+        "runtime": {
+          "Nano.Extensive.dll": {
+            "assemblyVersion": "2.0.1.0",
+            "fileVersion": "2.0.1.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "BackupConsole/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "AWSSDK.Core/3.3.101.17": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-sKSEV2eGzd2zHUzb/G2Y7iVUPNCgaacvh+wpZ8QQDXTT3bylF8ySZpzvmfLr0z5OxC066xJ57w+JONN5fPNQrg==",
+      "path": "awssdk.core/3.3.101.17",
+      "hashPath": "awssdk.core.3.3.101.17.nupkg.sha512"
+    },
+    "AWSSDK.S3/3.3.102.7": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-/1h1762cNBqTxNVvqooT47oReHRFF+BgLRTKlUB2XTREYlcm/iF5pvglo3flmYmnnNFAxfM8SrCvyubWQPoOyA==",
+      "path": "awssdk.s3/3.3.102.7",
+      "hashPath": "awssdk.s3.3.3.102.7.nupkg.sha512"
+    },
+    "BackupCore/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Podo.Main/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Nano.Common/2.0.1.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Nano.Extensive/2.0.1.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

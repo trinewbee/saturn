@@ -1,0 +1,35 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nano.Common", "Nano.Common\Nano.Common.csproj", "{7D075141-CDC5-4149-B6CA-7F284C7042EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nano.Extensive", "Nano.Extensive\Nano.Extensive.csproj", "{33757AEF-949F-4459-84C0-14ADC83CB839}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nano.Xapi", "Nano.Xapi\Nano.Xapi.csproj", "{BE3642E8-D0CC-4029-BB16-5B036F706941}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nano.Sockets", "Nano.Sockets\Nano.Sockets.csproj", "{DD631560-BF5C-400E-9D59-55D88AE6621C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7D075141-CDC5-4149-B6CA-7F284C7042EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D075141-CDC5-4149-B6CA-7F284C7042EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D075141-CDC5-4149-B6CA-7F284C7042EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D075141-CDC5-4149-B6CA-7F284C7042EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33757AEF-949F-4459-84C0-14ADC83CB839}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33757AEF-949F-4459-84C0-14ADC83CB839}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33757AEF-949F-4459-84C0-14ADC83CB839}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33757AEF-949F-4459-84C0-14ADC83CB839}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE3642E8-D0CC-4029-BB16-5B036F706941}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE3642E8-D0CC-4029-BB16-5B036F706941}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE3642E8-D0CC-4029-BB16-5B036F706941}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE3642E8-D0CC-4029-BB16-5B036F706941}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD631560-BF5C-400E-9D59-55D88AE6621C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD631560-BF5C-400E-9D59-55D88AE6621C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD631560-BF5C-400E-9D59-55D88AE6621C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD631560-BF5C-400E-9D59-55D88AE6621C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
