@@ -347,6 +347,26 @@ namespace Nano.Nuts
 
 		public DObject this[string key] => ((DMap)m_value)[key];
 
+        public bool HasKey(string key)
+        {
+            var map = m_value as DMap;
+            if (map == null)
+                throw new Exception("NotJsonDictionaryNode");
+            return map.ContainsKey(key);
+        }
+
+        public DObject GetNode(string key)
+        {
+            var map = m_value as DMap;
+            if (map == null)
+                throw new Exception("NotJsonDictionaryNode");
+
+            DObject o;
+            if (map.TryGetValue(key, out o))
+                return o;
+            return null;
+        }
+
 		#endregion
 
 		#region JSON 互操作
