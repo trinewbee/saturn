@@ -6,7 +6,7 @@
     <PackageId>Cloudhua.PuffNetCore</PackageId>
     <Description>PuffServer是基于aspnet上开发的web应用服务</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.1</Version>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.2' ">

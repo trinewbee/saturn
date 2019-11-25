@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net40;net45;net472;netcoreapp2.2;netcoreapp3.0</TargetFrameworks>
-    <Version>1.0.1</Version>
+    <Version>1.1.1</Version>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <PackageId>Cloudhua.Puff.Nano.Extensive</PackageId>
     <Authors>Cloudhua</Authors>
