@@ -21,9 +21,9 @@ namespace Nano.Extensive.RedLock
             throw new NotImplementedException();
         }
 
-        public IRedLock CreateLock(string resource, )
+        public IRedLock CreateLock(string resource)
         {
-
+            return this;
         }
     }
 
