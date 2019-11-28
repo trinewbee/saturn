@@ -110,7 +110,18 @@ namespace Nano.Ext.Web
 			Console.WriteLine("Starting web server at port {0}", port);
 		}
 
-		public void Close()
+        public void Start(params string[] prefixes)
+        {
+            Debug.Assert(m_listener == null);
+            m_listener = new HttpListener();
+            foreach (var prefix in prefixes)
+                m_listener.Prefixes.Add(prefix);
+            m_listener.Start(); // netsh http add urlacl url=http://+:8080/ user=Everyone
+            m_listener.BeginGetContext(new AsyncCallback(GetContextCallBack), this);
+            Console.WriteLine("Starting web server");
+        }
+
+        public void Close()
 		{
 			m_listener.Close();
 		}
