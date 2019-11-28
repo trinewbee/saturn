@@ -1,0 +1,4 @@
+../project/PuffSharedCore/bin/Release/Cloudhua.PuffShared.1.1.0.nupkg
+puff/PuffNetCore/bin/Release/Cloudhua.PuffNetCore.1.1.0.nupkg
+nano/Nano.Common/bin/Release/Cloudhua.Puff.Nano.Common.1.1.0.nupkg
+nano/Nano.Extensive/bin/Release/Cloudhua.Puff.Nano.Extensive.1.1.1.nupkg

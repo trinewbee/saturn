@@ -37,15 +37,15 @@ namespace Nano.Nuts
 
 	public static class G
 	{
-		public static void Error(string code)
-		{
-			throw new NutsException(code);
-		}
+        public static void Error(string code, string message = "")
+        {
+            throw new NutsException(code, message);
+        }
 
-		public static void Verify(bool f, string code)
-		{
-			if (!f)
-				throw new NutsException(code);
-		}
-	}
+        public static void Verify(bool f, string code, string message = "")
+        {
+            if (!f)
+                throw new NutsException(code, message);
+        }
+    }
 }

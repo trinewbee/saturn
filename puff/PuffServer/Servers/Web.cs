@@ -120,13 +120,13 @@ namespace Puff.Servers
 				NutsException inner = e.InnerException as NutsException;
 				if (inner != null)
 				{
-                    Logger.Err("NutsException: " + inner.Code, e.StackTrace);
+                    Logger.Err(env.reqId + "\t" + "NutsException: " + inner.Code, e.StackTrace + "\n" + (inner.InnerException != null ? inner.InnerException.StackTrace : ""));
                     WebGlobal.curEnv.stat = inner.Code;
                     ResponseWriter.SendResponse(ctx.Response, ErrorStat(inner.Code, inner.Message));
 				}
 				else
 				{
-                    Logger.Err("Exception: " + e.InnerException.Message, e.StackTrace);
+                    Logger.Err(env.reqId + "\t" + "Exception: " + e.InnerException.Message, e.StackTrace + "\n" + (e.InnerException != null ? e.InnerException.StackTrace : ""));
                     string stat = "InternalServerError";
                     WebGlobal.curEnv.stat = stat;
                     ResponseWriter.SendResponse(ctx.Response, ErrorStat(stat, "服务器内部异常"));
@@ -134,14 +134,14 @@ namespace Puff.Servers
 			}
 			catch (NutsException e)
 			{
-                Logger.Err("NutsException: " + e.Code, e.StackTrace);
+                Logger.Err(env.reqId + "\t" + "NutsException: " + e.Code, e.StackTrace + "\n" + (e.InnerException != null ? e.InnerException.StackTrace : ""));
                 WebGlobal.curEnv.stat = e.Code;
                 ResponseWriter.SendResponse(ctx.Response, ErrorStat(e.Code, e.Message));
 			}
 			catch (Exception e)
 			{
 				string stat = "InternalServerError";
-                Logger.Err("Exception: " + e.Message, e.StackTrace);
+                Logger.Err(env.reqId + "\t" + "Exception: " + e.Message, e.StackTrace + "\n" + (e.InnerException != null ? e.InnerException.StackTrace : ""));
                 WebGlobal.curEnv.stat = stat;
                 ResponseWriter.SendResponse(ctx.Response, ErrorStat(stat, "服务器内部异常"));
 			}
