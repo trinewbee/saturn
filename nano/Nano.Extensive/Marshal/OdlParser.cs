@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using System.Diagnostics;
 using Nano.Lexical;
+using Nano.Nuts;
 
 namespace Nano.Ext.Marshal
 {
@@ -62,202 +63,171 @@ namespace Nano.Ext.Marshal
 	/// <summary>ODL 解析类</summary>
 	public class OdlParser
 	{
-		const string TokenAfterEnd = "Unexpected token after end of node";
+		OdlNode m_root = null;
+		Stack<OdlNode> m_stack = new Stack<OdlNode>();
 
-		public OdlNode Parse(IEnumerable<string> text)
+		public OdlNode Parse(IEnumerable<string> lines)
 		{
-			var lines = LexParse(text);
-			return ParseSyntax(lines);
+			if (m_stack.Count != 0)
+				throw new Exception("MethodNotCompleted");
+
+			m_root = null;
+			string lastLine = null;
+			foreach (var line in lines)
+			{
+				var s = line.Trim();
+
+				if (s.Length != 0 && s[s.Length - 1] == '-' && (s.Length <= 1 || s[s.Length - 2] <= ' '))
+				{
+					// 本行末尾有续行符号
+					s = s.Substring(0, s.Length - 1); // 去掉末尾的 - 号
+					lastLine = lastLine != null ? lastLine + ' ' + s : s;
+					continue;
+				}
+
+				s = lastLine != null ? lastLine + ' ' + s : s;
+				ParseLine(s);
+				lastLine = null;
+			}
+			G.Verify(lastLine == null, "LinesNotEnded");
+
+			G.Verify(m_root != null, "NoContent");
+			return m_root;
 		}
 
-		/// <summary>解析 ODL 文档</summary>
-		/// <param name="tr">文本流</param>
-		/// <returns>返回文档的根节点</returns>
-		public OdlNode Parse(TextReader tr)
+		public OdlNode Parse(TextReader tr) => Parse(_FromTextReader(tr));
+
+		static IEnumerable<string> _FromTextReader(TextReader tr)
 		{
-			var e = LexParser.EnumTextLines(tr);
-			var lines = LexParse(e);
-			return ParseSyntax(lines);
+			string line;
+			while ((line = tr.ReadLine()) != null)
+				yield return line;
 		}
 
-		public OdlNode Parse(string path)
+		public OdlNode ParseFile(string path)
 		{
-			using (TextReader tr = new StreamReader(path, Encoding.UTF8))
+			using (var tr = new StreamReader(path, Encoding.UTF8))
 				return Parse(tr);
 		}
 
-		OdlNode ParseSyntax(List<LexLine> lines)
+		void ParseLine(string s)
 		{
-			OdlNode root = null;
-			var stack = new Stack<OdlNode>();
-			foreach (var line in lines)
+			var pos = LexParser.EatSpaces(s, 0);
+			if (pos >= s.Length)
+				return;
+
+			var ch = s[pos];
+			if (ch == '/') // closing symbol line
 			{
-				SelectMeanToken(line.Tokens);
-				if (line.Tokens.Count == 0)
-					continue;
+				++pos;
+				var ident = ParseIdent(s, ref pos);
+				G.Verify(m_stack.Count != 0, "NoMatchingNode");
 
-				var first = line.Tokens[0];
-				if (first.Type == LexTokenType.Ident)
-				{
-					bool closed;
-					var node = ParseNode(line, 0, out closed);
-					if (root == null)
-						root = node;
-					else if (stack.Count == 0)
-						throw new LexicalException(first.Pos, "Multiple root");
-					else
-						stack.Peek().AddNode(node);
+				var parent = m_stack.Pop();
+				G.Verify(parent.Name == ident, "NodeNotMatch");
 
-					if (!closed)
-						stack.Push(node);
-				}
-				else if (first.Type == LexTokenType.Symbol)
-				{
-					var sy = (OdlSymbols)first.VI;
-					if (sy == OdlSymbols.Div)
-						ParseEndNode(line, 0, stack);
-					else
-						throw new LexicalException(0, "Wrong symbol token");
-				}
-				else
-					throw new LexicalException(0, "Wrong token");
+				ExamContentAfterClosingSymbol(s, pos);
+				return;
 			}
+			else if (ch == '#') // comment
+				return;
 
-			if (root == null)
-				throw new LexicalException(0, "No root node");
-			else if (stack.Count != 0)
-				throw new LexicalException(0, "Node not closed");
-			return root;
-		}
-
-		#region Lexical
-
-		List<LexLine> LexParse(IEnumerable<string> text)
-		{
-			var symbols = new OdlSymbolFactory();
-			var keywords = new NullKeywordFactory();
-			var accp = new CommonLexAccept(symbols, keywords);
-			var parser = new LexParser(accp);
-			var lines = new List<LexLine>();
-			parser.Parse(text, lines);
-			return lines;
-		}
-
-		static void SelectMeanToken(List<LexToken> tokens)
-		{
-			for (int i = tokens.Count - 1; i >= 0; --i)
+			var symbol = ParseIdent(s, ref pos);
+			var node = new OdlNode(symbol);
+			if (m_stack.Count == 0)
 			{
-				var token = tokens[i];
-				if (token.Type != LexTokenType.Symbol)
-					continue;
-
-				var sy = (OdlSymbols)token.VI;
-				if (sy > OdlSymbols.None && sy < OdlSymbols.LineComment)
-					continue;
-
-				tokens.RemoveAt(i);
+				G.Verify(m_root == null, "MultipleRootNode");
+				m_root = node;
 			}
+			else
+				m_stack.Peek().AddNode(node);
+
+			ch = pos < s.Length ? s[pos] : '\0';
+			G.Verify(ch <= ' ' || ch == '/' || ch == '#', "WrongSymbolAfterNode");
+
+			if (!ParseAttrs(node, s, pos))
+				m_stack.Push(node);
 		}
 
-		#endregion
-
-		#region Element
-
-		OdlNode ParseNode(LexLine line, int pos, out bool closed)
+		// return true if ended with a closing symbol /
+		bool ParseAttrs(OdlNode node, string s, int pos)
 		{
-			closed = false;
-			var tokens = line.Tokens;
-			var token = NextToken(tokens, ref pos);
-			Debug.Assert(token.Type == LexTokenType.Ident);
-			var node = new OdlNode(token.VS);
-
-			while (pos < tokens.Count)
+			while ((pos = LexParser.EatSpaces(s, pos)) < s.Length)
 			{
-				token = PeekToken(tokens, pos);
-				if (token.Type == LexTokenType.Ident)
+				var ch = s[pos];
+				if (ch == '/') // closing
 				{
-					var pair = ParseAttr(line, ref pos);
-					node.Attributes.Add(pair.Key, pair.Value);
+					ExamContentAfterClosingSymbol(s, pos);
+					return true;
 				}
-				else if (token.Type == LexTokenType.Symbol)
+				else if (ch == '#') // comments
+					return false;
+
+				var key = ParseIdent(s, ref pos);
+				ch = pos < s.Length ? s[pos] : (char)0;
+				if (ch == '=')
 				{
-					var sy = (OdlSymbols)token.VI;
-					if (sy == OdlSymbols.Div)
+					++pos;
+					ch = pos < s.Length ? s[pos] : (char)0;
+
+					string value;
+					if (ch <= ' ')
+						value = "";
+					else if (ch == '"')
 					{
-						closed = true;
-						if (++pos < tokens.Count)
-							throw new LexicalException(tokens[pos].Pos, TokenAfterEnd);
+						value = Nano.Json.JsonParser.ParseStringValueToken(s, ref pos);
 					}
 					else
-						throw new LexicalException(token.Pos, "Wrong symbol token");
+					{
+						var epos = LexParser.NextSpace(s, pos);
+						value = s.Substring(pos, epos - pos);
+						G.Verify(value.Length == 0 || value[value.Length - 1] != '/', "WrongSymbolInAttrValue");
+						pos = epos;
+					}
+					node.Attributes.Add(key, value);
 				}
+				else if (ch == '/')
+				{
+					node.Attributes.Add(key, null);
+					ExamContentAfterClosingSymbol(s, pos);
+					return true;
+				}
+				else if (ch <= ' ')
+					node.Attributes.Add(key, null);
 				else
-					throw new LexicalException(token.Pos, "Wrong token");
+					throw new NutsException("WrongSymbolAfterAttrKey");
 			}
-
-			return node;
+			return false;
 		}
 
-		KeyValuePair<string, string> ParseAttr(LexLine line, ref int pos)
+		static void ExamContentAfterClosingSymbol(string s, int pos)
 		{
-			var tokens = line.Tokens;
-			var token = NextToken(tokens, ref pos);
-			Debug.Assert(token.Type == LexTokenType.Ident);
-			var key = token.VS;
+			pos = LexParser.EatSpaces(s, pos + 1);
+			G.Verify(pos >= s.Length || s[pos] == '#', "ContentsAfterCloseSymbol");
+		}
 
-			token = PeekToken(tokens, pos);
-			if (token == null || !CommonLexKit.IsSymbol(token, (int)OdlSymbols.Let))
-				return new KeyValuePair<string, string>(key, null);
-			++pos;
+		public static string ParseIdent(string s, ref int pos)
+		{
+			var ch = s[pos];
+			G.Verify(IsIdentHead(ch), "InvalidIdentChar");
 
-			token = NextToken(tokens, ref pos);
-			if (token == null)
-				throw new LexicalException(token.Pos, "Attribute value missing");
-
-			switch (token.Type)
+			string ident = new string(ch, 1);
+			for (++pos; pos < s.Length; ++pos)
 			{
-				case LexTokenType.Ident:
-				case LexTokenType.String:
-				case LexTokenType.Int:
-				case LexTokenType.Long:
-				case LexTokenType.Double:
-					return new KeyValuePair<string, string>(key, token.VS);
-				default:
-					throw new LexicalException(token.Pos, "Wrong attribute value");
+				ch = s[pos];
+				if (IsIdentChar(ch))
+					ident += ch;
+				else
+					break;
 			}
+
+			return ident;
 		}
 
-		void ParseEndNode(LexLine line, int pos, Stack<OdlNode> stack)
-		{
-			var tokens = line.Tokens;
-			var token = NextToken(tokens, ref pos);
-			Debug.Assert(CommonLexKit.IsSymbol(token, (int)OdlSymbols.Div));
+		public static bool IsIdentHead(char ch) => (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_';
 
-			token = NextToken(tokens, ref pos);
-			if (token.Type != LexTokenType.Ident)
-				throw new LexicalException(token.Pos, "Ident expected");
-
-			if (stack.Count == 0)
-				throw new LexicalException(token.Pos, "No node in stack");
-			var node = stack.Pop();
-
-			var id = token.VS;
-			if (node.Name != id)
-				throw new LexicalException(token.Pos, "Node name not match");
-
-			if (pos < tokens.Count)
-				throw new LexicalException(tokens[pos].Pos, TokenAfterEnd);
-		}
-
-		LexToken PeekToken(List<LexToken> tokens, int pos) => pos < tokens.Count ? tokens[pos] : null;
-
-		LexToken NextToken(List<LexToken> tokens, ref int pos)
-		{
-			if (pos < tokens.Count)
-				return tokens[pos++];
-			return null;
-		}
-
-		#endregion
+		public static bool IsIdentChar(char ch) =>
+			(ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') ||
+			ch == '-' || ch == '_' || ch == '.' || ch == ':';
 	}
 }
