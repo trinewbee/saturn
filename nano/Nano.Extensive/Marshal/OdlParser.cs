@@ -73,36 +73,37 @@ namespace Nano.Ext.Marshal
 
 			m_root = null;
 			string lastLine = null;
-			foreach (var line in lines)
+			var elines = lines.GetEnumerator();
+			while (elines.MoveNext())
 			{
-				var pos = LastNonSpace(line);
-				string s;
+				var line = elines.Current;
+				var pos = LastNonSpace(line);				
 
 				// 处理续行符号
 				if (pos >= 0 && line[pos] == '-' && (pos < 1 || line[pos - 1] <= ' '))
 				{
 					// 本行末尾有续行符号
-					s = line.Substring(0, pos); // 去掉末尾的 - 号
-					lastLine = lastLine != null ? lastLine + ' ' + s : s;
+					line = line.Substring(0, pos); // 去掉末尾的 - 号
+					lastLine = lastLine != null ? lastLine + line : line;
 					continue;
 				}
 
-				s = lastLine != null ? lastLine + ' ' + line : line;
+				line = lastLine != null ? lastLine + ' ' + line : line;
 				lastLine = null;
 
-				pos = LexParser.EatSpaces(s, 0);
-				if (pos >= s.Length) // 空行
+				pos = LexParser.EatSpaces(line, 0);
+				if (pos >= line.Length) // 空行
 					continue;
 
-				var ch = s[pos];
+				var ch = line[pos];
 				if (ch == '#') // 注释
 					continue;
 				else if (ch == '@') // 多行属性
-					throw new NotSupportedException();
+					ParseMultiLineAttr(line, pos, elines);
 				else if (ch == '/') // 关闭标签
-					ParseEndElementLine(s, pos);
+					ParseEndElementLine(line, pos);
 				else
-					ParseElementLine(s, pos);
+					ParseElementLine(line, pos);
 			}
 			G.Verify(lastLine == null, "LinesNotEnded");
 
@@ -207,6 +208,40 @@ namespace Nano.Ext.Marshal
 					throw new NutsException("WrongSymbolAfterAttrKey");
 			}
 			return false;
+		}
+
+		void ParseMultiLineAttr(string s, int pos, IEnumerator<string> elines)
+		{
+			Debug.Assert(s[pos] == '@');
+
+			G.Verify(m_stack.Count != 0, "NoMatchingNode");
+
+			++pos;
+			var ident = ParseIdent(s, ref pos);
+			ExamContentAfterClosingSymbol(s, pos);
+
+			var sb = new StringBuilder();
+			while (elines.MoveNext())
+			{
+				s = elines.Current;
+				pos = LexParser.EatSpaces(s, 0);
+				if (pos <= s.Length - ident.Length - 2 && s[pos] == '/')
+				{
+					if (s[pos + 1] == '@' && s.Substring(pos + 2, ident.Length) == ident)
+					{
+						// end of multi-line attribute
+						var node = m_stack.Peek();
+						node.Attributes.Add(ident, sb.ToString());
+						return;
+					}
+				}
+
+				if (sb.Length != 0)
+					sb.Append('\n');
+				sb.Append(s);
+			}
+
+			throw new Exception("AttrNotCompleted");
 		}
 
 		static void ExamContentAfterClosingSymbol(string s, int pos)

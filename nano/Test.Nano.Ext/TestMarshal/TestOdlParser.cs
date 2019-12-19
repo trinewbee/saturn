@@ -50,12 +50,35 @@ namespace TestExt
 			Test.Assert(attrs.Count == 2 && attrs["v"] == "测试" && attrs["t"] == null);
 		}
 
+		void testMultiLines()
+		{
+			var lines = new string[] { "a -", "-", "name=test /" };
+			var root = m_parser.Parse(lines);
+			Test.Assert(root.Name == "a");
+			var attrs = root.Attributes;
+			Test.Assert(attrs.Count == 1 && attrs["name"] == "test");
+
+			lines = new string[]
+			{
+				"person name=Zhang", "props rank=1 /",
+				"@desc", "Line 1", "Line 2", "/@desc",
+				"/person"
+			};
+			root = m_parser.Parse(lines);
+			Test.Assert(root.Name == "person" && root.Children.Count == 1);
+			attrs = root.Attributes;
+			Test.Assert(attrs["name"] == "Zhang" && attrs["desc"] == "Line 1\nLine 2");
+			var node = root.Children[0];
+			Test.Assert(node.Name == "props" && node.Attributes["rank"] == "1");
+		}
+
 		public static void Run()
 		{
 			Console.WriteLine($"TestMarshal.{nameof(TestOdlParser)}");
 			var o = new TestOdlParser();
 			o.testSimple();
 			o.testAttrs();
+			o.testMultiLines();
 		}
 	}
 }

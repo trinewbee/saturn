@@ -44,6 +44,23 @@ person name=Zhang -
   /
 ```
 
+### 多行属性
+
+可以使用 @ 修饰符来描述一个多行属性，例如：
+```
+person name=Zhang
+  props rank=1 /
+  @desc
+    定义多行属性 desc
+    个人简介写这里    
+  /@desc
+/person
+```
+
+这里的 person 元素包含 name 和 desc 两个属性。其中 desc 是一个多行属性。注意 props 是一个子元素，并不是 person 的属性，此处用于演示多行属性的归属关系。
+
+多行属性与普通属性一样支持 C 字符串转义。
+
 ### 其他
 
 ODL 不使用缩进来确定结构。缩进只是为了便于阅读，对于解析结果没有影响。
