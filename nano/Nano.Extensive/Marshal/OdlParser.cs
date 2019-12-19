@@ -75,19 +75,34 @@ namespace Nano.Ext.Marshal
 			string lastLine = null;
 			foreach (var line in lines)
 			{
-				var s = line.Trim();
+				var pos = LastNonSpace(line);
+				string s;
 
-				if (s.Length != 0 && s[s.Length - 1] == '-' && (s.Length <= 1 || s[s.Length - 2] <= ' '))
+				// 处理续行符号
+				if (pos >= 0 && line[pos] == '-' && (pos < 1 || line[pos - 1] <= ' '))
 				{
 					// 本行末尾有续行符号
-					s = s.Substring(0, s.Length - 1); // 去掉末尾的 - 号
+					s = line.Substring(0, pos); // 去掉末尾的 - 号
 					lastLine = lastLine != null ? lastLine + ' ' + s : s;
 					continue;
 				}
 
-				s = lastLine != null ? lastLine + ' ' + s : s;
-				ParseLine(s);
+				s = lastLine != null ? lastLine + ' ' + line : line;
 				lastLine = null;
+
+				pos = LexParser.EatSpaces(s, 0);
+				if (pos >= s.Length) // 空行
+					continue;
+
+				var ch = s[pos];
+				if (ch == '#') // 注释
+					continue;
+				else if (ch == '@') // 多行属性
+					throw new NotSupportedException();
+				else if (ch == '/') // 关闭标签
+					ParseEndElementLine(s, pos);
+				else
+					ParseElementLine(s, pos);
 			}
 			G.Verify(lastLine == null, "LinesNotEnded");
 
@@ -110,28 +125,22 @@ namespace Nano.Ext.Marshal
 				return Parse(tr);
 		}
 
-		void ParseLine(string s)
+		void ParseEndElementLine(string s, int pos)
 		{
-			var pos = LexParser.EatSpaces(s, 0);
-			if (pos >= s.Length)
-				return;
+			Debug.Assert(s[pos] == '/');
 
-			var ch = s[pos];
-			if (ch == '/') // closing symbol line
-			{
-				++pos;
-				var ident = ParseIdent(s, ref pos);
-				G.Verify(m_stack.Count != 0, "NoMatchingNode");
+			++pos;
+			var ident = ParseIdent(s, ref pos);
+			G.Verify(m_stack.Count != 0, "NoMatchingNode");
 
-				var parent = m_stack.Pop();
-				G.Verify(parent.Name == ident, "NodeNotMatch");
+			var parent = m_stack.Pop();
+			G.Verify(parent.Name == ident, "NodeNotMatch");
 
-				ExamContentAfterClosingSymbol(s, pos);
-				return;
-			}
-			else if (ch == '#') // comment
-				return;
+			ExamContentAfterClosingSymbol(s, pos);
+		}
 
+		void ParseElementLine(string s, int pos)
+		{
 			var symbol = ParseIdent(s, ref pos);
 			var node = new OdlNode(symbol);
 			if (m_stack.Count == 0)
@@ -142,7 +151,7 @@ namespace Nano.Ext.Marshal
 			else
 				m_stack.Peek().AddNode(node);
 
-			ch = pos < s.Length ? s[pos] : '\0';
+			var ch = pos < s.Length ? s[pos] : '\0';
 			G.Verify(ch <= ' ' || ch == '/' || ch == '#', "WrongSymbolAfterNode");
 
 			if (!ParseAttrs(node, s, pos))
@@ -229,5 +238,17 @@ namespace Nano.Ext.Marshal
 		public static bool IsIdentChar(char ch) =>
 			(ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') ||
 			ch == '-' || ch == '_' || ch == '.' || ch == ':';
+
+		public static int LastNonSpace(string s, int pos = -1)
+		{
+			if (pos < 0)
+				pos = s.Length - 1;
+			for (; pos >= 0; --pos)
+			{
+				if (s[pos] > ' ')
+					return pos;
+			}
+			return -1;
+		}
 	}
 }
