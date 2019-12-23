@@ -11,12 +11,19 @@ using MongoDB.Driver.Linq;
 
 namespace Nano.Mongo
 {
-    class MongoTable<T> : IMongoQueryable<T>
+    public class MongoTable<T> : IMongoQueryable<T>
     {
         public IMongoDatabase Db { get; }
         public IMongoCollection<T> Collection { get; }
 
         IMongoQueryable<T> m_query;
+
+        public MongoTable(IMongoDatabase db, IMongoCollection<T> col)
+        {
+            Db = db;
+            Collection = col;
+            m_query = Collection.AsQueryable();
+        }
 
         public MongoTable(IMongoDatabase db, string name)
         {
