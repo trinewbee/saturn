@@ -35,6 +35,10 @@ namespace Nano.Mongo
         public void Add(T value, InsertOneOptions options = null, CancellationToken cancellationToken = default) =>
             Collection.InsertOne(value, options, cancellationToken);
 
+        public long Count(FilterDefinition<T> filter, CountOptions options = null) => Collection.CountDocuments(filter, options);
+
+        public long Count(Expression<Func<T, bool>> expr, CountOptions options = null) => Collection.CountDocuments(expr, options);
+
         public List<T> Select(FilterDefinition<T> filter, FindOptions options = null)
         {
             var rs = Collection.Find(filter, options);
