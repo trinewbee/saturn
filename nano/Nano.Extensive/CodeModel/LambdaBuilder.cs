@@ -185,6 +185,8 @@ namespace Nano.Ext.CodeModel
         {
             public ParameterExpression[] Items;
 
+			public Argx(IList<ParameterExpression> _items) { Items = CollectionKit.ToArray(_items); }
+
             public Argx(ParameterExpression[] _items) { Items = _items; }
 
 			public int Count
@@ -326,7 +328,21 @@ namespace Nano.Ext.CodeModel
 
 		#endregion
 
+		#region Field
+
+		public static LEM Field(LEM o, FieldInfo field) => Expression.Field(o.e, field);
+
+		public static LEM Field(LEM o, Type vt, string name)
+		{
+			var field = vt.GetField(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+			return Field(o, field);
+		}
+
+		#endregion
+
 		#region Compile
+
+		public Expression<T> Lambda<T>(params ParameterExpression[] args) => Expression.Lambda<T>(e, args);
 
 		public T Compile<T>(params ParameterExpression[] prms) => LEB.Compile<T>(e, prms);
 
