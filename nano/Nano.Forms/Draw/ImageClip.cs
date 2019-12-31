@@ -120,9 +120,9 @@ namespace Nano.Forms
             }
             else
                 istream = item.Open(false);
-            var image = LoadImage(istream);
-            istream.Close();
-            return image;
+
+            using (istream)
+                return LoadImage(istream);
         }
 
         public static Image LoadImage(KeyValueAccess acc, string key)
@@ -135,9 +135,9 @@ namespace Nano.Forms
             }
             else
                 istream = acc.OpenObject(key, false);
-            var image = LoadImage(istream);
-            istream.Close();
-            return image;
+
+            using (istream)
+                return LoadImage(istream);
         }
 
         public static Image LoadImage(string path)
