@@ -176,7 +176,7 @@ namespace Nano.AWS
 			return r;
 		}
 
-		public void PutObject(string bucket, string key, Stream istream)
+		public PutObjectResponse PutObject(string bucket, string key, Stream istream)
 		{
 			var request = new PutObjectRequest { BucketName = bucket, Key = key, InputStream = istream };
 			request.StreamTransferProgress += new AwsTransferProgress().OnTransferProgress;
@@ -184,6 +184,7 @@ namespace Nano.AWS
             var task = Client.PutObjectAsync(request);
             var r = WaitTask(task);
 			Debug.Assert(r.HttpStatusCode == System.Net.HttpStatusCode.OK);
+            return r;
 		}
 
         public DeleteObjectResponse DeleteObject(DeleteObjectRequest request)
