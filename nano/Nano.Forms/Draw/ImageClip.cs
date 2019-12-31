@@ -98,24 +98,60 @@ namespace Nano.Forms
             m_imgc.Dispose();
         }
 
-        static Image Imgc_CreateObject(ImageClip clip)
+        #region 载入图像 (处理方向参数)
+
+        public static Image LoadImage(Stream stream)
         {
-            Debug.Assert(clip.Image == null);
+            var image = Bitmap.FromStream(stream);
+
+            // 调整方向
+            var rft = GetImageOrientation(image);
+            image.RotateFlip(rft);
+            return image;
+        }
+
+        public static Image LoadImage(FileTreeItem item, bool supportStream)
+        {
             Stream istream;
-            if (!clip.SupportStream)
+            if (!supportStream)
             {
-                var data = clip.Item.AtomRead();
+                var data = item.AtomRead();
                 istream = new MemoryStream(data);
             }
             else
-                istream = clip.Item.Open(false);
-            clip.Image = Bitmap.FromStream(istream);
-
-            // 调整方向
-            var rft = GetImageOrientation(clip.Image);
-            clip.Image.RotateFlip(rft);
-
+                istream = item.Open(false);
+            var image = LoadImage(istream);
             istream.Close();
+            return image;
+        }
+
+        public static Image LoadImage(KeyValueAccess acc, string key)
+        {
+            Stream istream;
+            if (!acc.SupportStream)
+            {
+                var data = acc.AtomRead(key);
+                istream = new MemoryStream(data);
+            }
+            else
+                istream = acc.OpenObject(key, false);
+            var image = LoadImage(istream);
+            istream.Close();
+            return image;
+        }
+
+        public static Image LoadImage(string path)
+        {
+            using (var istream = new FileStream(path, FileMode.Open, FileAccess.Read))
+                return LoadImage(istream);
+        }
+
+        #endregion
+
+        static Image Imgc_CreateObject(ImageClip clip)
+        {
+            Debug.Assert(clip.Image == null);
+            clip.Image = LoadImage(clip.Item, clip.SupportStream);
             return clip.Image;
         }
 
