@@ -13,6 +13,8 @@ namespace Nano.Mongo
 {
     public class MongoTable<T> : IMongoQueryable<T>
     {
+        public readonly static FilterDefinition<T> EmptyFilter = FilterDefinition<T>.Empty;
+
         public IMongoDatabase Db { get; }
         public IMongoCollection<T> Collection { get; }
 
@@ -44,6 +46,8 @@ namespace Nano.Mongo
             var rs = Collection.Find(filter, options);
             return rs.ToList();
         }
+
+        public List<T> Select(FindOptions options = null) => Select(EmptyFilter, options);
 
         public List<T> Select(Expression<Func<T, bool>> expr, FindOptions options = null)
         {
@@ -81,7 +85,7 @@ namespace Nano.Mongo
         public DeleteResult DeleteMany(Expression<Func<T, bool>> filter, DeleteOptions options = null, CancellationToken cancellationToken = default) =>
             Collection.DeleteMany(filter, options, cancellationToken);
 
-        public void Clear() => Collection.DeleteMany(FilterDefinition<T>.Empty);
+        public void Clear() => Collection.DeleteMany(EmptyFilter);
 
         #region IMongoQueryable
 
