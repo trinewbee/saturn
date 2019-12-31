@@ -6,4 +6,40 @@
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
+    <Reference Include="Nano.Common">
+      <HintPath>..\..\..\shared\cs\net40\Nano.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Nano.Extensive">
+      <HintPath>..\..\..\shared\cs\net40\Nano.Extensive.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <Reference Include="Nano.Common">
+      <HintPath>..\..\..\shared\cs\net45\Nano.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Nano.Extensive">
+      <HintPath>..\..\..\shared\cs\net45\Nano.Extensive.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
+    <Reference Include="Nano.Common">
+      <HintPath>..\..\..\shared\cs\net472\Nano.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Nano.Extensive">
+      <HintPath>..\..\..\shared\cs\net472\Nano.Extensive.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.0' ">
+    <Reference Include="Nano.Common">
+      <HintPath>..\..\..\shared\cs\netcoreapp3.0\Nano.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Nano.Extensive">
+      <HintPath>..\..\..\shared\cs\netcoreapp3.0\Nano.Extensive.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
