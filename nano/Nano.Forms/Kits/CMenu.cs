@@ -39,10 +39,11 @@ namespace Nano.Forms
         #endregion
     }
 
-    public class CMenuBuilder
+    public abstract class CMenuBuilderBase
     {
-        public MenuStrip Menu = new MenuStrip();
-        Stack<ToolStripMenuItem> m_stack = new Stack<ToolStripMenuItem>();
+        protected Stack<ToolStripMenuItem> m_stack = new Stack<ToolStripMenuItem>();
+
+        protected abstract void AddToRoot(ToolStripMenuItem item);
 
         public ToolStripMenuItem Add(string text, string name = null, Keys shortcut = Keys.None, EventHandler onclick = null)
         {
@@ -50,7 +51,7 @@ namespace Nano.Forms
             if (m_stack.Count != 0)
                 m_stack.Peek().DropDownItems.Add(item);
             else
-                Menu.Items.Add(item);
+                AddToRoot(item);
             return item;
         }
 
@@ -62,7 +63,21 @@ namespace Nano.Forms
         }
 
         public void End() => m_stack.Pop();
+    }
+
+    public class CMenuBuilder : CMenuBuilderBase
+    {
+        public MenuStrip Menu = new MenuStrip();
+
+        protected override void AddToRoot(ToolStripMenuItem item) => Menu.Items.Add(item);
 
         public void SetForm(Form form) => CMenu.SetForm(form, Menu);
+    }
+
+    public class CCtxMenuBuilder : CMenuBuilderBase
+    {
+        public ContextMenuStrip Menu = new ContextMenuStrip();
+
+        protected override void AddToRoot(ToolStripMenuItem item) => Menu.Items.Add(item);
     }
 }
