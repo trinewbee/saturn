@@ -61,7 +61,7 @@ namespace Nano.Sockets
 			m_sock = null;
 		}
 
-		internal SocketClient(Socket sock)
+		public SocketClient(Socket sock)
 		{
 			m_sock = sock;
 			PrepareComm();
