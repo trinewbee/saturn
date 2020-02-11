@@ -164,6 +164,34 @@ namespace TestExt
 			t_expr_0(m, 5);
 		}
 
+		class ftc
+		{
+			public int X = 3;
+			private int Y = 5;
+			private static int Z = 8;
+		}
+
+		delegate int ftcd(ftc o);
+
+		void testField()
+		{
+			var o = new ftc();
+			var args = LEM.Args<ftcd>();
+			LEM m = LEM.Field(LEM.Value(o), typeof(ftc), "X");			
+			var f = m.Compile<ftcd>(args);
+			Test.Assert(f(o) == 3);
+
+			m = LEM.Field(LEM.Value(o), typeof(ftc), "Y");
+			f = m.Compile<ftcd>(args);
+			Test.Assert(f(o) == 5);
+
+#if false
+			m = LEM.Field(LEM.Value(null), typeof(ftc), "Z");
+			f = m.Compile<ftcd>(args);
+			Test.Assert(f(o) == 8);
+#endif
+		}
+
 		void testParameters()
         {            
             var args = LEM.Args<d2>();
@@ -200,6 +228,7 @@ namespace TestExt
 			o.testComparisonExpr();
 			o.testLogicExpr();
 			o.testFuncCall();
+			o.testField();
 			o.testParameters();
             o.testLocalVars();
 			o.testJoin();
