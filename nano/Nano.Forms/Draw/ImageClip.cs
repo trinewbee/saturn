@@ -171,7 +171,7 @@ namespace Nano.Forms
 
         #endregion
 
-        public void LoadImage(ImageClip clip)
+        public virtual void LoadImage(ImageClip clip)
         {
             if (clip.Image != null)
                 return;
