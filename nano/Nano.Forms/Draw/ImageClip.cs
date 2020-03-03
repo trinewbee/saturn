@@ -88,15 +88,25 @@ namespace Nano.Forms
         #endregion
     }
 
-    public class ImageClip
+    public abstract class ImageClip
     {
         public int Index;
+        public Image Image;
+    }
+
+    public interface ImageLibraryProvider : IDisposable
+    {
+        void LoadImages(List<ImageClip> clips);
+        void LoadImage(ImageClip clip);
+    }
+
+    public class FileTreeImageClip : ImageClip
+    {
         public string Path;
         public FileTreeItem Item;
         public bool SupportStream;
-        public Image Image;
 
-        public ImageClip(int index, string path, FileTreeItem item, bool supportStream)
+        public FileTreeImageClip(int index, string path, FileTreeItem item, bool supportStream)
         {
             Index = index;
             Path = path;
@@ -107,45 +117,34 @@ namespace Nano.Forms
 
         public override int GetHashCode() => Path.GetHashCode();
 
-        public override bool Equals(object obj) => ((ImageClip)obj).Path == Path;
+        public override bool Equals(object obj) => ((FileTreeImageClip)obj).Path == Path;
     }
 
-    public class ImageLibrary
+    public class ImageLibraryFileTreeProvider : ImageLibraryProvider
     {
-        FileTreeAccess m_acc;
-        List<ImageClip> m_clips;
-        LRUCachePool<ImageClip, Image> m_imgc;
-        ImageClip m_cur;
-        Random m_random;
+        protected FileTreeAccess m_acc;
 
-        public ImageLibrary()
+        public ImageLibraryFileTreeProvider(FileTreeAccess acc)
         {
-            const int cached = 10;
-            m_clips = new List<ImageClip>();
-            m_imgc = new LRUCachePool<ImageClip, Image>(cached);
-            m_imgc.CreateObject += Imgc_CreateObject;
-            m_imgc.OnObjectObsoleted += Imgc_OnObjectObsoleted;
-            m_cur = null;
-            m_random = new Random();
+            m_acc = acc;
+        }
+
+        public ImageLibraryFileTreeProvider(string path)
+        {
+            m_acc = new LocalFileTreeAccess(path);
+        }
+
+        public void Dispose()
+        {
+            m_acc?.Close();
+            m_acc = null;
         }
 
         #region Load
 
-        public void Load(FileTreeAccess acc)
-        {
-            m_acc = acc;
-            LoadDir("/", acc.Root);
-            Debug.Assert(m_clips.Count > 0);
-            m_cur = m_clips[0];
-        }
+        public void LoadImages(List<ImageClip> clips) => LoadDir(clips, m_acc.Root, "/");
 
-        public void LoadLocal(string path)
-        {
-            var acc = new LocalFileTreeAccess(path);
-            Load(acc);
-        }
-
-        void LoadDir(string path, FileTreeItem fi)
+        void LoadDir(List<ImageClip> clips, FileTreeItem fi, string path)
         {
             Debug.Assert(fi.IsDir);
             var subfis = fi.List();
@@ -154,34 +153,71 @@ namespace Nano.Forms
             {
                 string subpath = path + subfi.Name;
                 if (subfi.IsDir)
-                    LoadDir(subpath + '/', subfi);
+                    LoadDir(clips, subfi, subpath + '/');
                 else
-                    LoadFile(subpath, subfi);
+                    LoadFile(clips, subfi, subpath);
             }
         }
 
-        void LoadFile(string path, FileTreeItem fi)
+        void LoadFile(List<ImageClip> clips, FileTreeItem fi, string path)
         {
             string ext = Path.GetExtension(fi.Name).ToLowerInvariant();
             if (!(ext == ".jpg" || ext == ".jpeg"))
                 return;
 
-            var clip = new ImageClip(m_clips.Count, path, fi, m_acc.SupportStream);
-            m_clips.Add(clip);
+            var clip = new FileTreeImageClip(clips.Count, path, fi, m_acc.SupportStream);
+            clips.Add(clip);
         }
 
         #endregion
 
+        public void LoadImage(ImageClip clip)
+        {
+            if (clip.Image != null)
+                return;
+
+            var _clip = (FileTreeImageClip)clip;
+            clip.Image = ImageKit.LoadImage(_clip.Item, _clip.SupportStream);
+        }
+    }
+
+    public class ImageLibrary
+    {
+        ImageLibraryProvider m_provider;
+        List<ImageClip> m_clips;
+        LRUCachePool<ImageClip, Image> m_imgc;
+        ImageClip m_cur;
+        Random m_random;
+
+        public ImageLibrary(ImageLibraryProvider provider)
+        {
+            const int cached = 10;
+            m_provider = provider;
+            m_clips = new List<ImageClip>();
+            m_imgc = new LRUCachePool<ImageClip, Image>(cached);
+            m_imgc.CreateObject += Imgc_CreateObject;
+            m_imgc.OnObjectObsoleted += Imgc_OnObjectObsoleted;
+            m_cur = null;
+            m_random = new Random();
+        }
+
+        public void Load()
+        {
+            m_provider.LoadImages(m_clips);
+            Debug.Assert(m_clips.Count > 0);
+            m_cur = m_clips[0];
+        }
+        
         public void Close()
         {
-            m_acc.Close();
+            m_provider.Dispose();
             m_imgc.Dispose();
         }        
 
-        static Image Imgc_CreateObject(ImageClip clip)
+        Image Imgc_CreateObject(ImageClip clip)
         {
             Debug.Assert(clip.Image == null);
-            clip.Image = ImageKit.LoadImage(clip.Item, clip.SupportStream);
+            m_provider.LoadImage(clip);
             return clip.Image;
         }
 
