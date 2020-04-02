@@ -5,17 +5,22 @@ namespace Nano.Forms.Miu
 {    
     public class MiuViewHost
     {
-        public Form Form { get; }
+        public MiuForm Form { get; }
         public Control Parent { get; }
 
-        public MiuViewHost(Form form, Control parent)
+        public MiuViewHost(MiuForm form, Control parent)
         {
             Form = form;
             Parent = parent;
         }
+
+        /// <summary>切换 View</summary>
+        public void SwitchView(MiuView view, bool dispose = false) => Form.SwitchView(view, dispose);
+
+        public void PopView() => Form.PopView();
     }
 
-    public interface MiuViewManager
+    public interface MiuApplication
     {
         MiuView Open();
         void Close();
