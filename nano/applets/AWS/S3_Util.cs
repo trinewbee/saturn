@@ -48,14 +48,6 @@ namespace Nano.AWS
             return new S3Utility(client);
         }
 
-        public static S3Utility MakeMyClient(bool innerNet)
-		{
-            var url = innerNet ? "http://172.17.17.5" : "https://s3.cloudhua.com";
-            const string access_key = "X795AVB3MCJEFEZXS4ZA";
-			const string secret_key = "INjbwhAKIIohxImhph2hy9sK9OFbxwT1vcfnDXNl";
-            return MakeClient(url, access_key, secret_key);
-		}
-
         #endregion
 
         #region 同步方法
