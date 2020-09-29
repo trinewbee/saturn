@@ -13,15 +13,6 @@
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net472' ">
     <DefineConstants>NETFX;NETFX472;NETFX40_Compat;NETFX45_Compat;NETFX472_Compat</DefineConstants>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Reference Condition="'$(Platform)' == 'x86'" Include="CBFS6Net">
-      <HintPath>..\..\..\..\shared\cs\pc\cbfs\net40-x86\CBFS6Net.dll</HintPath>
-    </Reference>
-    <Reference Condition="'$(Platform)' == 'x64'" Include="CBFS6Net">
-      <HintPath>..\..\..\..\shared\cs\pc\cbfs\net40-x64\CBFS6Net.dll</HintPath>
-    </Reference>
-  </ItemGroup>
   
   <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
     <Reference Include="Nano.Common">
@@ -29,6 +20,12 @@
     </Reference>
     <Reference Include="Nano.Extensive">
       <HintPath>..\..\..\..\shared\cs\net40\Nano.Extensive.dll</HintPath>
+    </Reference>
+    <Reference Condition="'$(Platform)' == 'x86'" Include="CBFS6Net">
+      <HintPath>..\..\..\..\shared\cs\net40\x86\CBFS6Net.dll</HintPath>
+    </Reference>
+    <Reference Condition="'$(Platform)' == 'x64'" Include="CBFS6Net">
+      <HintPath>..\..\..\..\shared\cs\net40\x64\CBFS6Net.dll</HintPath>
     </Reference>
   </ItemGroup>
 
@@ -38,6 +35,12 @@
     </Reference>
     <Reference Include="Nano.Extensive">
       <HintPath>..\..\..\..\shared\cs\net472\Nano.Extensive.dll</HintPath>
+    </Reference>
+    <Reference Condition="'$(Platform)' == 'x86'" Include="CBFS6Net">
+      <HintPath>..\..\..\..\shared\cs\net472\x86\CBFS6Net.dll</HintPath>
+    </Reference>
+    <Reference Condition="'$(Platform)' == 'x64'" Include="CBFS6Net">
+      <HintPath>..\..\..\..\shared\cs\net472\x64\CBFS6Net.dll</HintPath>
     </Reference>
   </ItemGroup>
 
