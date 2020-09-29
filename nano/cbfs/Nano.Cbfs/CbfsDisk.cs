@@ -327,7 +327,7 @@ namespace Nano.Cbfs
 			cbfs.OnIsDirectoryEmpty = new CbFsIsDirectoryEmptyEvent(CbfsProxy.CbfsIsDirectoryEmpty);
 		}
 
-		public static void Mount(CbfsDisk disk)
+		public static void Mount(CbfsDisk disk, string mountPoint = "P:")
 		{
 			const string sRegKey = "289CF30B234C2C087257F489569B988D4AEA109D19AD15054C212EB3B2F2BEA91F1290E508156DF4EE1868A4CCCFC4ACE0B5F65E00DDE496B73B5FC512B426C51E038C15660BA0053029D678020A5FDDE48015746C2F68B2E57B7A1F7CD142A7C4D912D75085CACF88FD96FBDC31FE23C4D922A7E0958E3354E9A64BECC1CE5390C54CED";
 			const string guid = "713CC6CE-B3E2-4fd9-838D-E28F558F6866";
@@ -346,7 +346,7 @@ namespace Nano.Cbfs
 			cbfs.CreateStorage();
 
 			cbfs.MountMedia(0);
-			cbfs.AddMountingPoint("P:");
+			cbfs.AddMountingPoint(mountPoint);
 		}
 
 		public static void Unmount(CbfsDisk disk)
