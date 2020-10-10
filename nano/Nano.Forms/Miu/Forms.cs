@@ -27,6 +27,8 @@ namespace Nano.Forms.Miu
 
             m_views = new Stack<MiuView>();
             m_viewHost = new MiuViewHost(this, m_panel);
+
+            m_manager.FormInit(this);
         }
 
         private void Form_Load(object sender, EventArgs e)

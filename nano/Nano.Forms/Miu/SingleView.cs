@@ -17,6 +17,8 @@ namespace Nano.Forms.Miu
             m_view = view;
         }
 
+        public void FormInit(Form form) { }
+
         public MiuView Open() => m_view;
 
         public void Close() { }

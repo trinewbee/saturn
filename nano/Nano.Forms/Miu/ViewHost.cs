@@ -22,7 +22,15 @@ namespace Nano.Forms.Miu
 
     public interface MiuApplication
     {
+        /// <summary>Invoked by constructor of Form class</summary>
+        /// <param name="form">Form instance</param>
+        void FormInit(Form form);
+
+        /// <summary>Create first view</summary>
+        /// <returns>View</returns>
+        /// <remarks>Invoked in Form_Load event</remarks>
         MiuView Open();
+
         void Close();
     }
 
