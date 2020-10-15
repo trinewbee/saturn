@@ -48,12 +48,17 @@ namespace Nano.Logs
         public void WriteLine(string s)
         {
             var dt = DateTime.UtcNow;
-            Buffer.Add(dt.Ticks, s);
+            lock (Buffer)
+                Buffer.Add(dt.Ticks, s);
 
             if (m_console || m_tw != null)
             {
                 var ds = dt.ToLocalTime().ToString("yyyy/MM/dd HH:mm:ss ") + s;
-                m_tw?.WriteLine(ds);
+                if (m_tw != null)
+                {
+                    lock (m_tw)
+                        m_tw.WriteLine(ds);
+                }                
                 if (m_console)
                     Console.WriteLine(ds);
             }

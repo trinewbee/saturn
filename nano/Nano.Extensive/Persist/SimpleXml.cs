@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Reflection;
-using System.Text;
 using System.Xml;
 using System.Diagnostics;
 
@@ -29,7 +28,16 @@ namespace Nano.Ext.Persist
 			return ParseElement(vt, doc.DocumentElement);
 		}
 
+		public object LoadXmlDocument(Stream stream, Type vt)
+        {
+			var doc = new XmlDocument();
+			doc.Load(stream);
+			return ParseElement(vt, doc.DocumentElement);
+        }
+
 		public T LoadXmlDocument<T>(string path) => (T)LoadXmlDocument(path, typeof(T));
+
+		public T LoadXmlDocument<T>(Stream stream) => (T)LoadXmlDocument(stream, typeof(T));
 
 		#region Element Values
 
@@ -320,6 +328,18 @@ namespace Nano.Ext.Persist
 		public void SaveXmlDocument<T>(string path, string name, T o)
 		{
 			var xmlw = Nano.Xml.XmlKit.CreateXmlWriter(path);
+			SaveXmlDocument(xmlw, name, o);
+		}
+
+		public void SaveXmlDocument<T>(Stream stream, string name, T o)
+        {
+			var xmlw = Xml.XmlKit.CreateXmlWriter(stream);
+			SaveXmlDocument(xmlw, name, o);
+		}
+
+		public void SaveXmlDocument<T>(TextWriter tw, string name, T o)
+        {
+			var xmlw = Xml.XmlKit.CreateXmlWriter(tw);
 			SaveXmlDocument(xmlw, name, o);
 		}
 

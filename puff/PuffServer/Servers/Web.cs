@@ -190,7 +190,8 @@ namespace Puff.Servers
             var reqMap = ParseQueryMap(request);
             var args = m_ivk.PrepareJsonMethodArgs(m.MI, reqBody, reqMap);
 
-            throw new NotImplementedException();
+            var ret = (IceApiResponse)m_ivk.Invoke(m, args);
+            SendApiResponse(response, ret);
         }
 
         static JsonNode ParseJsonRequestBody(HttpListenerRequest request)
