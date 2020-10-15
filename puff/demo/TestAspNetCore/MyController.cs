@@ -37,6 +37,9 @@ namespace TestAspNetCore
         [IceApi(Stat = null)]
         void NoStat() { }
 
+        [IceApi(Ret = "data")]
+        string GetHost(HttpRequest request) { return request.Host.Value; }
+
         [IceApi(Cookie = "name,value")]
         (string name, int value) Cookie(string name, int value) => ("x-" + name, value + 1);
 
@@ -48,6 +51,13 @@ namespace TestAspNetCore
         {
             var r = IceApiResponse.String($"Hello, {name}!");
             r.SetToSave(name + ".txt");
+            return r;
+        }
+
+        [IceApi(Ret = "data", Flags = IceApiFlag.JsonIn)]
+        IceApiResponse PrintUrl(HttpRequest request, string name) 
+        {
+            var r = IceApiResponse.String($"{name}! access {request.Host}");
             return r;
         }
 

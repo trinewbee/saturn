@@ -238,7 +238,7 @@ namespace Puff.NetCore
             var reqBody = ParseJsonRequestBody(request);
             var reqMap = ParseQueryMap(request);
             
-            var args = JmGlobal.Mib.PrepareJsonMethodArgs(jm.MI, reqBody, reqMap);
+            var args = JmGlobal.Mib.PrepareJsonMethodArgs(jm.MI, reqBody, reqMap, request);
             object ret = jm.MI.Invoke(instance, args);
             
             if (flags == IceApiFlag.Json)

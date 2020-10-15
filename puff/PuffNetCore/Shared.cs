@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Microsoft.AspNetCore.Http;
 using Nano.Collection;
 using Nano.Json;
 using Nano.Nuts;
@@ -87,19 +88,19 @@ namespace Puff.NetCore
 
         public MethodInBuilder(JsonObjectBuilder job) => m_job = job;
 
-        public object[] PrepareJsonMethodArgs(MethodInfo m, JsonNode body, Dictionary<string, string> cookies)
+        public object[] PrepareJsonMethodArgs(MethodInfo m, JsonNode body, Dictionary<string, string> cookies, HttpRequest request)
         {
             var prms = m.GetParameters();
             var args = new object[prms.Length];
             for (int i = 0; i < prms.Length; ++i)
             {
                 var prm = prms[i];
-                args[i] = PrepareJsonMethodArg(prm.Name, prm.ParameterType, prm.RawDefaultValue, body, cookies);
+                args[i] = PrepareJsonMethodArg(prm.Name, prm.ParameterType, prm.RawDefaultValue, body, cookies, request);
             }
             return args;
         }
 
-        public object PrepareJsonMethodArg(string name, Type vt, object defv, JsonNode body, Dictionary<string, string> cookies)
+        public object PrepareJsonMethodArg(string name, Type vt, object defv, JsonNode body, Dictionary<string, string> cookies, HttpRequest request)
         {
             var jn = body.GetChildItem(name);
             if (jn != null)
@@ -109,6 +110,9 @@ namespace Puff.NetCore
             if (cookies != null && cookies.TryGetValue(name, out str))
                 return Nano.Common.ExtConvert.FromString(vt, str);
 
+            if (vt == typeof(HttpRequest))
+                return request;
+            
             if (HasDefaultValue(defv))
                 return defv;
 

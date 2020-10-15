@@ -89,4 +89,14 @@ if __name__ == "__main__":
     r = RequestRaw(server + "/my/savehello?name=Tayo")
     assert r[0] == 200 and r[2] == "Hello, Tayo!"
 
+    # Json Api Request
+    response = RequestRaw(server + "/my/GetHost")
+    assert r[0] == 200
+    r = json.loads(response[2])
+    assert r == {"data":"10.211.55.8:5000","stat":"ok"}
+
+    response = RequestRaw(server + "/my/PrintUrl?name=wenliangjun")
+    assert response[0] == 200 
+    assert response[2] == "wenliangjun! access 10.211.55.8:5000"
+    
     print "ok"    
