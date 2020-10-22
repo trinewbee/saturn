@@ -116,7 +116,7 @@ namespace Puff.NetCore
             if (HasDefaultValue(defv))
                 return defv;
 
-            throw new NutsException("KeyNotFound:" + name);
+            throw new NutsException("KeyNotFound:" + name, "KeyNotFound:" + name);
         }
 
         public static bool HasDefaultValue(object v) => v == null || v.GetType() != typeof(DBNull);
@@ -248,12 +248,12 @@ namespace Puff.NetCore
             else if (o is System.Collections.IList)
                 return BuildJSR_Ret_List((System.Collections.IList)o, names);
             else
-                throw new NutsException("WrongReturnType");
+                throw new NutsException("WrongReturnType", "WrongReturnType:" + o);
         }
 
         JsonNode BuildJSR_Ret_Tuple(ITuple o, string[] names)
         {
-            G.Verify(o.Length == names.Length, "WrongObjectNumber");
+            G.Verify(o.Length == names.Length, "WrongObjectNumber", "WrongObjectNumber,Num=" + names.Length);
             var jn = new JsonNode(JsonNodeType.Dictionary);
             for (int i = 0; i < names.Length; ++i)
             {
@@ -266,7 +266,7 @@ namespace Puff.NetCore
 
         JsonNode BuildJSR_Ret_List(System.Collections.IList o, string[] names)
         {
-            G.Verify(o.Count == names.Length, "WrongObjectNumber");
+            G.Verify(o.Count == names.Length, "WrongObjectNumber", "WrongObjectNumber,Num=" + names.Length);
             var jn = new JsonNode(JsonNodeType.Dictionary);
             for (int i = 0; i < names.Length; ++i)
             {
@@ -300,7 +300,7 @@ namespace Puff.NetCore
                 case JsonNodeType.Boolean:
                     return jn.BoolValue.ToString();
                 default:
-                    throw new NutsException("WrongJsonType");
+                    throw new NutsException("WrongJsonType", "WrongJsonType:" + jn.NodeType);
             }
         }
 

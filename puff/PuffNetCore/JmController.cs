@@ -12,6 +12,7 @@ using Nano.Json;
 using Nano.Logs;
 using Nano.Nuts;
 using Puff.Marshal;
+using Puff.Ext.Sentry;
 
 namespace Puff.NetCore
 {
@@ -315,6 +316,7 @@ namespace Puff.NetCore
         public IceApiResponse _MethodDispatch()
         {
             const string InternalServerError = "InternalServerError";
+            
             IceApiResponse response = null;
             var env = new Env(Request);
             try
@@ -336,16 +338,19 @@ namespace Puff.NetCore
                 NutsException inner = e.InnerException as NutsException;
                 if (inner != null)
                 {
-                    Logger.Err(env.reqId + "\t" + "NutsException: " + inner.Code, e.StackTrace + "\n" + (inner.InnerException != null ? inner.InnerException.StackTrace : ""));
+                    Logger.Err(env.reqId + "\t" + "NutsException: " + inner.Code, inner.StackTrace + "\n" + (inner.InnerException != null ? inner.InnerException.StackTrace : ""));
                     WebGlobal.curEnv.stat = inner.Code;
                     response = IceApiResponse.Error(inner.Code, inner.Message);
+                    
                 }
                 else
                 {
-                    Logger.Err(env.reqId + "\t" + "Exception: " + e.InnerException.Message, e.StackTrace + "\n" + (e.InnerException != null ? e.InnerException.StackTrace : ""));
+                    Logger.Err(env.reqId + "\t" + "Exception: " + e.InnerException.Message, e.InnerException.StackTrace + "\n" + (e.InnerException != null ? e.InnerException.StackTrace : ""));
                     string stat = "InternalServerError";
+                    string msg = "服务器端异常";
                     WebGlobal.curEnv.stat = stat;
-                    response = IceApiResponse.Error(InternalServerError);
+                    response = IceApiResponse.Error(InternalServerError, msg);
+                    SentryUtil.Notify(Sentry.Protocol.SentryLevel.Error, e.InnerException, env.reqId + "\t" + "Exception: " + e.InnerException.Message);
                 }
             }
             catch (NutsException e)
@@ -357,9 +362,11 @@ namespace Puff.NetCore
             catch (Exception e)
             {
                 string stat = "InternalServerError";
+                string msg = "服务器端异常";
                 Logger.Err(env.reqId + "\t" + "Exception: " + e.Message, e.StackTrace + "\n" + (e.InnerException != null ? e.InnerException.StackTrace : ""));
                 WebGlobal.curEnv.stat = stat;
-                response = IceApiResponse.Error(InternalServerError);
+                response = IceApiResponse.Error(InternalServerError, msg);
+                SentryUtil.Notify(Sentry.Protocol.SentryLevel.Error, e, env.reqId + "\t" + "Exception: " + e.Message);
             }
             _AccessLog(env);
             return response;

@@ -65,7 +65,7 @@ namespace Puff.Marshal
                 if (r.Item1)
                     return r.Item2;
             }
-            throw new NutsException(NutsException.NotSupported);
+            throw new NutsException(NutsException.NotSupported, NutsException.NotSupported);
         }
 
         public static JsonObjectBuilder BuildDefault()
@@ -116,7 +116,7 @@ namespace Puff.Marshal
             else if (vt == typeof(DObject))
                 return (true, DObject.New(jn));
             else if (JmbForbidSystemTypes.IsForbid(vt))
-                throw new NutsException("ForbidType:" + vt.Name);
+                throw new NutsException("ForbidType:" + vt.Name, "ForbidType:" + vt.Name);
             else
                 return (false, null);
         }
@@ -158,7 +158,7 @@ namespace Puff.Marshal
                 case "System.Char":
                     return (char)jn.IntValue;
                 default:
-                    throw new NutsException(NutsException.NotSupported);
+                    throw new NutsException(NutsException.NotSupported, NutsException.NotSupported + ":" + vt.FullName);
             }
         }
 
@@ -191,7 +191,7 @@ namespace Puff.Marshal
                 case "System.Char":
                     return ToChar(s);
                 default:
-                    throw new NutsException(NutsException.NotSupported);
+                    throw new NutsException(NutsException.NotSupported, NutsException.NotSupported + ":" + vt.FullName);
             }
         }
     }
@@ -214,7 +214,7 @@ namespace Puff.Marshal
                 return (true, e);
             }
             else
-                throw new NutsException(JsonObjectBuilder.WrongJsonType);
+                throw new NutsException(JsonObjectBuilder.WrongJsonType, JsonObjectBuilder.WrongJsonType + ":" + jn.NodeType);
         }
     }
 
@@ -305,7 +305,7 @@ namespace Puff.Marshal
                 case "System.Char":
                     return isval ? (char?)jn.IntValue : null;
                 default:
-                    throw new NutsException(NutsException.NotSupported);
+                    throw new NutsException(NutsException.NotSupported, NutsException.NotSupported + ":" + pt.FullName);
             }
         }
     }

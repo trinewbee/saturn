@@ -64,7 +64,7 @@ namespace Puff.NetCore
             else
             {
                 System.Diagnostics.Debug.Fail("UnsupportedIceApiResponse");
-                throw new NutsException("UnsupportedIceApiResponse");
+                throw new NutsException("UnsupportedIceApiResponse", "UnsupportedIceApiResponse");
             }
         }
     }

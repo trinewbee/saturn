@@ -35,7 +35,7 @@ namespace Puff.Marshal
         {
             var jn = TryBuild(o);
             if (jn == null)
-                throw new NutsException(NutsException.NotSupported);
+                throw new NutsException(NutsException.NotSupported, NutsException.NotSupported);
             return jn;
         }
 
@@ -76,7 +76,7 @@ namespace Puff.Marshal
             else if (vt == typeof(DObject))
                 return DObject.ExportJson((DObject)o);
             else if (JmbForbidSystemTypes.IsForbid(vt))
-                throw new NutsException("ForbidType:" + vt.Name);
+                throw new NutsException("ForbidType:" + vt.Name, "ForbidType:" + vt.Name);
             else
                 return null;
         }
@@ -110,7 +110,7 @@ namespace Puff.Marshal
                 case "System.Char":
                     return new JsonNode((char)o);
                 default:
-                    throw new NutsException(NutsException.NotSupported);
+                    throw new NutsException(NutsException.NotSupported, NutsException.NotSupported + ":" + vt.FullName);
             }
         }
     }
