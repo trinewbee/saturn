@@ -14,12 +14,7 @@ namespace Puff.Ext.Sentry
         public static void Init(string dsn, string hostName, string env)
         {
             SentrySdk.Init(dsn);
-            SentrySdk.ConfigureScope(scope =>
-            {
-                scope.SetTag("hostname", hostName);
-                scope.Environment = env;
-            });
-            hepler = new SentryHepler();
+            hepler = new SentryHepler(hostName, env);
         }
 
         public static void Notify(SentryLevel level, Exception ex, string subject = null, object extra = null)
@@ -32,11 +27,21 @@ namespace Puff.Ext.Sentry
 
     public class SentryHepler
     {
-        
+        private string hostName;
+        private string env;
+
+        public SentryHepler(string _hostName, string _env)
+        {
+            hostName = _hostName;
+            env = _env;
+        }
+
         public void Notify(SentryLevel level, Exception ex, string subject = null, object extra = null)
         {
             SentrySdk.WithScope(scope =>
             {
+                scope.SetTag("hostname", hostName);
+                scope.Environment = env;
                 scope.SetExtra("subject", subject);
                 scope.Level = level;
                 if (extra != null)
