@@ -10,3 +10,4 @@ out/
 # Python
 *.pyc
 .vscode
+nugetPush.sh
