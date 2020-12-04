@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Nano.Forms
@@ -45,6 +43,18 @@ namespace Nano.Forms
 				if (HideNotifyWhenFormShown)
 					m_notify.Visible = true;
 			}
+		}
+
+		public static void Setup(Form form, string text, Icon icon)
+        {
+			var notify = new NotifyIcon { Text = text, Icon = icon };
+			new NotifyIconUtil().Setup(form, notify);
+		}
+
+		public static void Setup(Form form, string text, string pathIcon)
+        {
+			var icon = new Icon(pathIcon);
+			Setup(form, text, icon);
 		}
 	}
 }
