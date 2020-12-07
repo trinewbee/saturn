@@ -1,0 +1,4 @@
+提示 CBFS6Net.dll 无法加载
+dumpbin /dependents CBFS6Net.dll
+发现对 MSVCR100.dll 的引用，这是 Visual C++ 2010 的运行库
+安装 N:\个人文件\Software\Dev\Libs\vcredist\vc2010sp1\vcredist_x64.exe 即可解决
