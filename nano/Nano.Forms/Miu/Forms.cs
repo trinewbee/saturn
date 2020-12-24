@@ -39,7 +39,7 @@ namespace Nano.Forms.Miu
 
         private void Form_Closing(object sender, FormClosingEventArgs e)
         {
-            if (m_view != null && m_view.QueryClose())
+            if (m_view != null && !m_view.QueryClose())
             {
                 e.Cancel = true;
                 return;
@@ -53,7 +53,7 @@ namespace Nano.Forms.Miu
         {
             if (dispose && m_view != null)
             {
-                if (view.QueryClose())
+                if (!view.QueryClose())
                     return;
 
                 m_view.Dispose();
@@ -69,7 +69,7 @@ namespace Nano.Forms.Miu
         {
             if (m_view != null)
             {
-                if (m_view.QueryClose())
+                if (!m_view.QueryClose())
                     return;
 
                 m_view.Dispose();

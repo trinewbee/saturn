@@ -37,6 +37,6 @@ namespace Nano.Forms.Miu
     public interface MiuView : IDisposable
     {
         void InitUI(MiuViewHost host);
-        bool QueryClose(); // 如果要取消关闭，返回 true
+        bool QueryClose(); // 如果要取消关闭，返回 false
     }
 }
