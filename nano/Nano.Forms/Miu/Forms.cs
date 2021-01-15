@@ -10,8 +10,9 @@ namespace Nano.Forms.Miu
         MiuApplication m_manager;
         Stack<MiuView> m_views;
         MiuViewHost m_viewHost;
-        MiuView m_view = null;
         Panel m_panel;
+
+        internal MiuView TopView => m_views.Count != 0 ? m_views.Peek() : null;
 
         public MiuForm(MiuApplication manager)
         {
@@ -39,10 +40,14 @@ namespace Nano.Forms.Miu
 
         private void Form_Closing(object sender, FormClosingEventArgs e)
         {
-            if (m_view != null && !m_view.QueryClose())
+            while (m_views.Count != 0)
             {
-                e.Cancel = true;
-                return;
+                if (!PopView())
+                {
+                    // Cancelled
+                    e.Cancel = true;
+                    return;
+                }
             }
 
             m_manager.Close();
@@ -51,35 +56,37 @@ namespace Nano.Forms.Miu
 
         internal void SwitchView(MiuView view, bool dispose)
         {
-            if (dispose && m_view != null)
+            var topView = TopView;
+            if (dispose && topView != null)
             {
-                if (!view.QueryClose())
+                if (!topView.QueryClose())
                     return;
 
-                m_view.Dispose();
+                topView.Dispose();
                 m_views.Pop();
             }
 
             m_panel.Controls.Clear();
-            m_views.Push(m_view = view);
-            m_view.InitUI(m_viewHost);
+            m_views.Push(view);
+            view.InitUI(m_viewHost);
         }
 
-        internal void PopView()
+        internal bool PopView()
         {
-            if (m_view != null)
-            {
-                if (!m_view.QueryClose())
-                    return;
+            var topView = TopView;
+            if (topView == null)
+                return true;
 
-                m_view.Dispose();
-                m_view = null;
-            }
+            if (!topView.QueryClose())
+                return false;
 
-            m_panel.Controls.Clear();
+            topView.Dispose();
             m_views.Pop();
-            m_view = m_views.Count != 0 ? m_views.Peek() : null;
-            m_view?.InitUI(m_viewHost);
+            m_panel.Controls.Clear();
+
+            topView = TopView;
+            topView?.InitUI(m_viewHost);
+            return true;
         }
     }
 }
