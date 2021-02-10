@@ -10,6 +10,14 @@ namespace Nano.Forms
     {
         public const AnchorStyles AnchorFill = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom;
         public const AnchorStyles AnchorWidth = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
+        public const AnchorStyles AnchorWidthBottom = AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Top;
+        public const AnchorStyles AnchorHeight = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Bottom;
+        public const AnchorStyles AnchorHeightRight = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom;
+
+        public const AnchorStyles AnchorLeftTop = AnchorStyles.Left | AnchorStyles.Top;
+        public const AnchorStyles AnchorLeftBottom = AnchorStyles.Left | AnchorStyles.Bottom;
+        public const AnchorStyles AnchorRightTop = AnchorStyles.Right | AnchorStyles.Top;
+        public const AnchorStyles AnchorRightBottom = AnchorStyles.Right | AnchorStyles.Bottom;
 
         public class HorzSplitResult
         {
