@@ -22,29 +22,35 @@ namespace Puff.Marshal
 
         public JmClass RetrieveClassInfo(Type vt)
         {
-            JmClass c;
-            if (m_cmap.TryGetValue(vt, out c))
-                return c;
+            lock (this)
+            {
+                JmClass c;
+                if (m_cmap.TryGetValue(vt, out c))
+                    return c;
 
-            const BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
-            c = new JmClass { VT = vt };
-            c.Fields = vt.GetFields(flags);
-            c.Props = vt.GetProperties(flags);
-            m_cmap.Add(vt, c);
-            return c;
+                const BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
+                c = new JmClass { VT = vt };
+                c.Fields = vt.GetFields(flags);
+                c.Props = vt.GetProperties(flags);
+                m_cmap.Add(vt, c);
+                return c;
+            }
         }
 
         public JmClass RetrieveAnonymousClassInfo(Type vt)
         {
-            JmClass c;
-            if (m_cmap.TryGetValue(vt, out c))
-                return c;
+            lock (this)
+            {
+                JmClass c;
+                if (m_cmap.TryGetValue(vt, out c))
+                    return c;
 
-            c = new JmClass { VT = vt };
-            c.Fields = new FieldInfo[0];
-            c.Props = vt.GetProperties();
-            m_cmap.Add(vt, c);
-            return c;
+                c = new JmClass { VT = vt };
+                c.Fields = new FieldInfo[0];
+                c.Props = vt.GetProperties();
+                m_cmap.Add(vt, c);
+                return c;
+            }
         }
     }
 
