@@ -13,6 +13,7 @@ using Nano.Logs;
 using Nano.Nuts;
 using Puff.Marshal;
 using Puff.Ext.Sentry;
+using System.Security.Cryptography;
 
 namespace Puff.NetCore
 {
@@ -297,7 +298,7 @@ namespace Puff.NetCore
             WebGlobal.curEnv.queryStr = JsonModel.Dumps(map);
             return map;
         }
-
+        
         #endregion
     }
 
@@ -386,23 +387,24 @@ namespace Puff.NetCore
             sb.Append(SEP);
             sb.Append(env.stat);
             sb.Append(SEP);
-            sb.Append(env.postStr);
+            sb.Append(FilterLog.Filter(env.postStr));
             sb.Append(SEP);
-            sb.Append(env.queryStr);
+            sb.Append(FilterLog.Filter(env.queryStr));
             if (env.logParams != null)
             {
                 foreach (var param in env.logParams)
                 {
                     sb.Append(SEP);
-                    JsonWriter wr = new JsonWriter(param.Value, false);
-                    string retStr = wr.GetString();
+                    var retJn = DObject.ImportJson(param.Value);
+                    var retStr = retJn.ToString();
                     sb.Append(param.Key + ":");
-                    sb.Append(retStr);
+                    sb.Append(FilterLog.Filter(retStr));
                 }
 
             }
             Logger.Acc(null, sb.ToString());
         }
+        
     }
     public class Env
     {

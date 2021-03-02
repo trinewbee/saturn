@@ -17,10 +17,10 @@ namespace Puff.Ext.Sentry
             hepler = new SentryHepler(hostName, env);
         }
 
-        public static void Notify(SentryLevel level, Exception ex, string subject = null, object extra = null)
+        public static void Notify(SentryLevel level, Exception ex, string subject = null, object extra = null, User user = null)
         {
             if (hepler != null)
-                hepler.Notify(level, ex, subject, extra);
+                hepler.Notify(level, ex, subject, extra, user);
         }
 
     }
@@ -36,7 +36,7 @@ namespace Puff.Ext.Sentry
             env = _env;
         }
 
-        public void Notify(SentryLevel level, Exception ex, string subject = null, object extra = null)
+        public void Notify(SentryLevel level, Exception ex, string subject = null, object extra = null, User user = null)
         {
             SentrySdk.WithScope(scope =>
             {
@@ -44,6 +44,8 @@ namespace Puff.Ext.Sentry
                 scope.Environment = env;
                 scope.SetExtra("subject", subject);
                 scope.Level = level;
+                if (user != null)
+                    scope.User = user;
                 if (extra != null)
                 {
                     scope.SetExtra("extra", extra);
