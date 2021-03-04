@@ -64,6 +64,7 @@
     <Compile Include="Persist\BomCollection.cs" />
     <Compile Include="Persist\JsonPersist.cs" />
     <Compile Include="Persist\SimpleXml.cs" />
+    <Compile Include="RedLock\RedLock.cs" />
     <Compile Include="Web\MiniWebServer.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -51,6 +51,7 @@
     <Compile Include="Collection\ListTable.cs" />
     <Compile Include="Collection\LRUCachePool.cs" />
     <Compile Include="Collection\RingBuffer.cs" />
+    <Compile Include="Common\BasicKit.cs" />
     <Compile Include="Common\FileWalker.cs" />
     <Compile Include="Common\Time.cs" />
     <Compile Include="Common\TreeWalker.cs" />
