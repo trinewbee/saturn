@@ -38,7 +38,12 @@ namespace TestAspNetCore
         void NoStat() { }
 
         [IceApi(Ret = "data")]
-        string GetHost(HttpRequest request) { return request.Host.Value; }
+        string GetHost(HttpRequest request) 
+        {
+
+            WebGlobal.curEnv.logParams.Add("test", DObject.New(new Dictionary<string, object>() { { "x", request.Host.Value } }).ToJson() );
+            return request.Host.Value; 
+        }
 
         [IceApi(Cookie = "name,value")]
         (string name, int value) Cookie(string name, int value) => ("x-" + name, value + 1);

@@ -18,7 +18,7 @@ def RequestHttp(url, headers = {}, data = None):
     assert r[0] == 200
     return json.loads(r[2])
 
-server = "http://127.0.0.1:5000"
+server = "http://10.211.55.8:5000"
 
 if __name__ == "__main__":
     print "TestHttp"

@@ -7,6 +7,8 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Nano.Logs;
+using Puff.NetCore;
 
 namespace TestAspNetCore
 {
@@ -14,6 +16,8 @@ namespace TestAspNetCore
     {
         public static void Main(string[] args)
         {
+            FilterLog.Init(new string[] { "wps_sid", "x", "name" });
+            Logger.Init("./logs", null, false, 69206016);
             CreateWebHostBuilder(args).Build().Run();
         }
 

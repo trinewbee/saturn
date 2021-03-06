@@ -41,8 +41,7 @@ namespace Puff.NetCore
 
             if (apir.Json != null)
             {
-                var jw = new JsonWriter(apir.Json);
-                var text = jw.GetString();
+                var text = DObject.ImportJson(apir.Json).ToString();
                 var data = Encoding.UTF8.GetBytes(text);
                 response.ContentType = IceApiResponse.CT_JsonUtf8;
                 response.ContentLength = data.Length;
