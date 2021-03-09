@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 
 namespace Nano.Forms.Miu
-{    
+{
     public class MiuViewHost
     {
         public MiuForm Form { get; }
@@ -36,7 +36,10 @@ namespace Nano.Forms.Miu
 
     public interface MiuView : IDisposable
     {
-        void InitUI(MiuViewHost host);
+        /// <summary>Initialize view instance</summary>
+        /// <param name="host">View host context</param>
+        /// <param name="restore">True if the view instance is restored from view stack</param>
+        void InitUI(MiuViewHost host, bool restore);
         bool QueryClose(); // 如果要取消关闭，返回 false
     }
 }

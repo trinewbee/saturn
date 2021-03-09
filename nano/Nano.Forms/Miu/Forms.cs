@@ -68,7 +68,7 @@ namespace Nano.Forms.Miu
 
             m_panel.Controls.Clear();
             m_views.Push(view);
-            view.InitUI(m_viewHost);
+            view.InitUI(m_viewHost, false);
         }
 
         internal bool PopView()
@@ -85,7 +85,7 @@ namespace Nano.Forms.Miu
             m_panel.Controls.Clear();
 
             topView = TopView;
-            topView?.InitUI(m_viewHost);
+            topView?.InitUI(m_viewHost, true);
             return true;
         }
     }
