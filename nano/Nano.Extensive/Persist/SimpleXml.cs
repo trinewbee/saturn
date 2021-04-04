@@ -19,25 +19,25 @@ namespace Nano.Ext.Persist
 		public string Loader, Saver;
 	}
 
-	public class SimpleXmlLoader
+	public static class SimpleXmlLoader
 	{
-		public object LoadXmlDocument(string path, Type vt)
+		public static object LoadXmlDocument(string path, Type vt)
 		{
 			var doc = new XmlDocument();
 			doc.Load(path);
 			return ParseElement(vt, doc.DocumentElement);
 		}
 
-		public object LoadXmlDocument(Stream stream, Type vt)
+		public static object LoadXmlDocument(Stream stream, Type vt)
         {
 			var doc = new XmlDocument();
 			doc.Load(stream);
 			return ParseElement(vt, doc.DocumentElement);
         }
 
-		public T LoadXmlDocument<T>(string path) => (T)LoadXmlDocument(path, typeof(T));
+		public static T LoadXmlDocument<T>(string path) => (T)LoadXmlDocument(path, typeof(T));
 
-		public T LoadXmlDocument<T>(Stream stream) => (T)LoadXmlDocument(stream, typeof(T));
+		public static T LoadXmlDocument<T>(Stream stream) => (T)LoadXmlDocument(stream, typeof(T));
 
 		#region Element Values
 
@@ -58,6 +58,8 @@ namespace Nano.Ext.Persist
 			else
 				throw new NotSupportedException("Unsupported type: " + vt.FullName);
 		}
+
+		public static T ParseElement<T>(XmlElement e) => (T)ParseElement(typeof(T), e);
 
 		static object ParseValueElement(Type vt, XmlElement e)
 		{
