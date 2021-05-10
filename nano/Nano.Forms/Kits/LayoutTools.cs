@@ -26,7 +26,7 @@ namespace Nano.Forms
 
         public static PanelSplitResult LayoutSplit(Control parent, bool vert = false)
         {
-            var orient = vert ? Orientation.Vertical : Orientation.Horizontal;
+            var orient = vert ? Orientation.Horizontal : Orientation.Vertical;
             var split = new SplitContainer { Dock = DockStyle.Fill, Orientation = orient };
             parent.Controls.Add(split);
             split.SplitterDistance = split.Width / 3;
@@ -35,7 +35,7 @@ namespace Nano.Forms
 
         public static PanelSplitResult LayoutSplit3(Control parent, bool vert = false)
         {
-            var orient = vert ? Orientation.Vertical : Orientation.Horizontal;
+            var orient = vert ? Orientation.Horizontal : Orientation.Vertical;
             var split = new SplitContainer { Dock = DockStyle.Fill, Orientation = orient };
             parent.Controls.Add(split);
             split.SplitterDistance = split.Width * 4 / 10;
