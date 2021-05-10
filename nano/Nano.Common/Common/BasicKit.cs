@@ -30,5 +30,14 @@ namespace Nano.Common
 				obj = default;
 			}
 		}
+
+		public static void ReleaseComObject<T>(ref T o) where T : class
+		{
+			if (o != null)
+			{
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(o);
+				o = null;
+			}
+		}
 	}
 }
