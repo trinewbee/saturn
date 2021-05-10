@@ -19,30 +19,32 @@ namespace Nano.Forms
         public const AnchorStyles AnchorRightTop = AnchorStyles.Right | AnchorStyles.Top;
         public const AnchorStyles AnchorRightBottom = AnchorStyles.Right | AnchorStyles.Bottom;
 
-        public class HorzSplitResult
+        public class PanelSplitResult
         {
             public Panel panel1, panel2, panel3;
         }
 
-        public static HorzSplitResult HorzSplit(Control parent)
+        public static PanelSplitResult LayoutSplit(Control parent, bool vert = false)
         {
-            var split = new SplitContainer { Dock = DockStyle.Fill };
+            var orient = vert ? Orientation.Vertical : Orientation.Horizontal;
+            var split = new SplitContainer { Dock = DockStyle.Fill, Orientation = orient };
             parent.Controls.Add(split);
             split.SplitterDistance = split.Width / 3;
-            return new HorzSplitResult { panel1 = split.Panel1, panel2 = split.Panel2 };
+            return new PanelSplitResult { panel1 = split.Panel1, panel2 = split.Panel2 };
         }
 
-        public static HorzSplitResult HorzSplit3(Control parent)
+        public static PanelSplitResult LayoutSplit3(Control parent, bool vert = false)
         {
-            var split = new SplitContainer { Dock = DockStyle.Fill };
+            var orient = vert ? Orientation.Vertical : Orientation.Horizontal;
+            var split = new SplitContainer { Dock = DockStyle.Fill, Orientation = orient };
             parent.Controls.Add(split);
             split.SplitterDistance = split.Width * 4 / 10;
 
-            var split2 = new SplitContainer { Dock = DockStyle.Fill };
+            var split2 = new SplitContainer { Dock = DockStyle.Fill, Orientation = orient };
             split.Panel1.Controls.Add(split2);
             split2.SplitterDistance = split2.Width / 2;
 
-            return new HorzSplitResult { panel1 = split2.Panel1, panel2 = split2.Panel2, panel3 = split.Panel2 };
-        }
+            return new PanelSplitResult { panel1 = split2.Panel1, panel2 = split2.Panel2, panel3 = split.Panel2 };
+        }        
     }
 }
