@@ -60,9 +60,45 @@ namespace Nano.Win32
 		[DllImport("user32.dll")]
 		public static extern int GetCursorPos(ref WinBase.POINT lpPoint);
 
+        #region Message
+
+        public const uint WM_COMMAND = 0x0111;
+
+		// BOOL PostMessageW(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
+		[DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+		public static extern int PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
 		// LRESULT WINAPI SendMessage(_In_ HWND hWnd, _In_ UINT Msg, _In_ WPARAM wParam, _In_ LPARAM lParam);
 		[DllImport("user32.dll")]
 		public static extern IntPtr SendMessage(IntPtr hWnd, uint wMsg, UIntPtr wParam, IntPtr lParam);
+
+		#endregion
+
+		#region Menu
+
+		// HMENU GetMenu(HWND hWnd);
+		[DllImport("user32.dll")]
+		public static extern IntPtr GetMenu(IntPtr hWnd);
+
+		// int GetMenuItemCount(HMENU hMenu);
+		[DllImport("user32.dll")]
+		public static extern int GetMenuItemCount(IntPtr hMenu);
+
+		// int GetMenuStringW(HMENU hMenu, UINT uIDItem, LPWSTR lpString, int cchMax, UINT flags);
+		[DllImport("user32.dll", CharSet = CharSet.Unicode)]
+		public static extern int GetMenuString(IntPtr hMenu, uint uIDItem, StringBuilder lpString, int cchMax, uint flags);
+		public const uint MF_BYCOMMAND = 0x00000000u;
+		public const uint MF_BYPOSITION = 0x00000400u;
+
+		// HMENU GetSubMenu(HMENU hMenu, int nPos);
+		[DllImport("user32.dll", CharSet = CharSet.Unicode)]
+		public static extern IntPtr GetSubMenu(IntPtr hMenu, int nPos);
+
+		// UINT GetMenuItemID(HMENU hMenu, int nPos);
+		[DllImport("user32.dll", CharSet = CharSet.Unicode)]
+		public static extern uint GetMenuItemID(IntPtr hMenu, int nPos);
+
+		#endregion
 
 		// DWORD WINAPI GetWindowThreadProcessId(_In_ HWND hWnd, _Out_opt_ LPDWORD lpdwProcessId);
 		[DllImport("user32.dll")]
