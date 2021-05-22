@@ -74,6 +74,16 @@ namespace Nano.Win32
 		[DllImport("user32.dll", CharSet = CharSet.Unicode)]
 		public static extern int SetWindowText(IntPtr hWnd, string lpString);
 
+		// LONG GetWindowLongW(HWND hWnd, int nIndex);
+		[DllImport("user32.dll")]
+		public static extern long GetWindowLongW(IntPtr hwnd, int nIndex);
+
+		public const int GWL_STYLE = -16;
+
+		// BOOL IsWindow(HWND hWnd);
+		[DllImport("user32.dll")]
+		public static extern int IsWindow(IntPtr hWnd);
+
 		#endregion
 
 		// BOOL WINAPI GetCursorPos(_Out_ LPPOINT lpPoint);
@@ -111,11 +121,21 @@ namespace Nano.Win32
 
 		#region WM_ constants
 
+		public const uint WM_NULL = 0x0000;
+		public const uint WM_CREATE = 0x0001;
+		public const uint WM_DESTROY = 0x0002;
+		public const uint WM_MOVE = 0x0003;
+		public const uint WM_SIZE = 0x0005;
+		public const uint WM_ACTIVATE = 0x0006;
+		public const uint WM_SETFOCUS = 0x0007;
+		public const uint WM_KILLFOCUS = 0x0008;
+		public const uint WM_ENABLE = 0x000A;
+		public const uint WM_SETREDRAW = 0x000B;
 		public const uint WM_SETTEXT = 0x000C;
 		public const uint WM_GETTEXT = 0x000D;
 		public const uint WM_GETTEXTLENGTH = 0x000E;
-
-		public const uint WM_COMMAND = 0x0111;
+		public const uint WM_PAINT = 0x000F;
+		public const uint WM_CLOSE = 0x0010;
 
 		public const uint WM_KEYDOWN = 0x0100;
 		public const uint WM_KEYUP = 0x0101;
@@ -124,6 +144,8 @@ namespace Nano.Win32
 		public const uint WM_SYSKEYDOWN = 0x0104;
 		public const uint WM_SYSKEYUP = 0x0105;
 		public const uint WM_SYSCHAR = 0x0106;
+
+		public const uint WM_COMMAND = 0x0111;
 
 		#endregion
 
