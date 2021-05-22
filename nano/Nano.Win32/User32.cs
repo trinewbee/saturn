@@ -22,6 +22,10 @@ namespace Nano.Win32
 		[DllImport("user32.dll")]
 		public static extern int EnumWindows(EnumWindowsProc func, IntPtr lParam);
 
+		// BOOL EnumChildWindows(HWND hWndParent, WNDENUMPROC lpEnumFunc, LPARAM lParam);
+		[DllImport("user32.dll")]
+		public static extern int EnumChildWindows(IntPtr hWndParent, EnumWindowsProc func, IntPtr lParam);
+
 		// BOOL WINAPI IsWindowVisible(_In_ HWND hWnd);
 		[DllImport("user32.dll")]
 		public static extern int IsWindowVisible(IntPtr hwnd);
@@ -29,6 +33,10 @@ namespace Nano.Win32
 		// int WINAPI GetWindowText(_In_ HWND hWnd, _Out_ LPTSTR lpString, _In_ int nMaxCount);
 		[DllImport("user32.dll", CharSet = CharSet.Unicode)]
 		public static extern int GetWindowText(IntPtr hwnd, StringBuilder lptrString, int nMaxCount);
+
+		// int GetClassName(HWND hWnd, LPTSTR lpClassName, int nMaxCount);
+		[DllImport("user32.dll", CharSet = CharSet.Unicode)]
+		public static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
 
 		// HWND WINAPI WindowFromPoint(_In_ POINT Point);
 		[DllImport("user32.dll")]
@@ -163,11 +171,11 @@ namespace Nano.Win32
 
 	public class Window
 	{
-		public IntPtr m_hwnd;	// HWND
+		public IntPtr hWnd;	// HWND
 
 		public Window(IntPtr hwnd)
 		{
-			m_hwnd = hwnd;
+			hWnd = hwnd;
 		}
 
 		#region Properties
@@ -176,7 +184,7 @@ namespace Nano.Win32
 		{
 			get
 			{
-				var phwnd = User32.GetParent(m_hwnd);
+				var phwnd = User32.GetParent(hWnd);
 				return phwnd !=  IntPtr.Zero ? new Window(phwnd) : null;
 			}
 		}
@@ -185,8 +193,8 @@ namespace Nano.Win32
 		{
 			get
 			{
-				StringBuilder sb = new StringBuilder(512);
-				int n = User32.GetWindowText(m_hwnd, sb, sb.Capacity);
+				StringBuilder sb = new StringBuilder(1024);
+				int n = User32.GetWindowText(hWnd, sb, sb.Capacity - 1);
 
 				if (n == 0)
 					return null;	// ignore error
@@ -197,12 +205,18 @@ namespace Nano.Win32
 			}
 		}
 
-		public bool Visible
-		{
-			get { return WinBase.IsTrue(User32.IsWindowVisible(m_hwnd)); }
-		}
+		public bool Visible => WinBase.IsTrue(User32.IsWindowVisible(hWnd));
 
 		#endregion
+
+		public string GetClassName()
+        {
+			StringBuilder sb = new StringBuilder(1024);
+			int n = User32.GetClassName(hWnd, sb, sb.Capacity - 1);
+			var s = sb.ToString();
+			Debug.Assert(s.Length == n);
+			return s;
+		}
 
 		public static List<Window> ListWindows()
 		{
@@ -213,7 +227,23 @@ namespace Nano.Win32
 				return WinBase.TRUE;
 			};
 
-			int ret = User32.EnumWindows(proc, new IntPtr(0));
+			int ret = User32.EnumWindows(proc, IntPtr.Zero);
+			if (WinBase.IsFalse(ret))
+				throw WinErrorException.LastErr();
+
+			return handles;
+		}
+
+		public static List<Window> ListChildWindows(IntPtr hwndParent)
+        {
+			var handles = new List<Window>();
+			User32.EnumWindowsProc proc = delegate (IntPtr hwnd, IntPtr lParam)
+			{
+				handles.Add(new Window(hwnd));
+				return WinBase.TRUE;
+			};
+
+			int ret = User32.EnumChildWindows(hwndParent, proc, IntPtr.Zero);
 			if (WinBase.IsFalse(ret))
 				throw WinErrorException.LastErr();
 
