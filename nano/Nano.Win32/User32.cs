@@ -70,15 +70,23 @@ namespace Nano.Win32
 		[DllImport("user32.dll")]
 		public static extern int SetForegroundWindow(IntPtr hWnd);
 
+		// BOOL SetWindowText(HWND hWnd, LPCWSTR lpString);
+		[DllImport("user32.dll", CharSet = CharSet.Unicode)]
+		public static extern int SetWindowText(IntPtr hWnd, string lpString);
+
 		#endregion
 
 		// BOOL WINAPI GetCursorPos(_Out_ LPPOINT lpPoint);
 		[DllImport("user32.dll")]
 		public static extern int GetCursorPos(ref WinBase.POINT lpPoint);
 
-        #region Message
+		#region Message
 
-        public const uint WM_COMMAND = 0x0111;
+		public const uint WM_SETTEXT = 0x000C;
+		public const uint WM_GETTEXT = 0x000D;
+		public const uint WM_GETTEXTLENGTH = 0x000E;
+
+		public const uint WM_COMMAND = 0x0111;
 
 		public const uint WM_KEYDOWN = 0x0100;
 		public const uint WM_KEYUP = 0x0101;
@@ -101,6 +109,9 @@ namespace Nano.Win32
 
 		[DllImport("user32.dll")]
 		public static extern IntPtr SendMessage(IntPtr hWnd, uint wMsg, uint wParam, uint lParam);
+
+		[DllImport("user32.dll")]
+		public static extern IntPtr SendMessage(IntPtr hWnd, uint wMsg, UIntPtr wParam, string lParam);
 
 		#endregion
 
