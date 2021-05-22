@@ -139,6 +139,25 @@ namespace Nano.Win32
 
 		#endregion
 
+		#region BM_ constants (Button Control Messages)
+
+		public const int BM_GETCHECK = 0x00F0;
+		public const int BM_SETCHECK = 0x00F1;
+		public const int BM_GETSTATE = 0x00F2;
+		public const int BM_SETSTATE = 0x00F3;
+		public const int BM_SETSTYLE = 0x00F4;
+		public const int BM_CLICK = 0x00F5;
+		public const int BM_GETIMAGE = 0x00F6;
+		public const int BM_SETIMAGE = 0x00F7;
+		public const int BM_SETDONTCLICK = 0x00F8;
+		public const int BST_UNCHECKED = 0x0000;
+		public const int BST_CHECKED = 0x0001;
+		public const int BST_INDETERMINATE = 0x0002;
+		public const int BST_PUSHED = 0x0004;
+		public const int BST_FOCUS = 0x0008;
+
+		#endregion
+
 		#region Menu
 
 		// HMENU GetMenu(HWND hWnd);
