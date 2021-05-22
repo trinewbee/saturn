@@ -80,21 +80,11 @@ namespace Nano.Win32
 		[DllImport("user32.dll")]
 		public static extern int GetCursorPos(ref WinBase.POINT lpPoint);
 
+		// HWND GetDlgItem(HWND hDlg, int nIDDlgItem);
+		[DllImport("user32.dll")]
+		public static extern IntPtr GetDlgItem(IntPtr hDlg, int nIDDlgItem);
+
 		#region Message
-
-		public const uint WM_SETTEXT = 0x000C;
-		public const uint WM_GETTEXT = 0x000D;
-		public const uint WM_GETTEXTLENGTH = 0x000E;
-
-		public const uint WM_COMMAND = 0x0111;
-
-		public const uint WM_KEYDOWN = 0x0100;
-		public const uint WM_KEYUP = 0x0101;
-		public const uint WM_CHAR = 0x0102;
-		public const uint WM_DEADCHAR = 0x0103;
-		public const uint WM_SYSKEYDOWN = 0x0104;
-		public const uint WM_SYSKEYUP = 0x0105;
-		public const uint WM_SYSCHAR = 0x0106;
 
 		// BOOL PostMessageW(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 		[DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
@@ -112,6 +102,40 @@ namespace Nano.Win32
 
 		[DllImport("user32.dll")]
 		public static extern IntPtr SendMessage(IntPtr hWnd, uint wMsg, UIntPtr wParam, string lParam);
+
+		#endregion
+
+		#region WM_ constants
+
+		public const uint WM_SETTEXT = 0x000C;
+		public const uint WM_GETTEXT = 0x000D;
+		public const uint WM_GETTEXTLENGTH = 0x000E;
+
+		public const uint WM_COMMAND = 0x0111;
+
+		public const uint WM_KEYDOWN = 0x0100;
+		public const uint WM_KEYUP = 0x0101;
+		public const uint WM_CHAR = 0x0102;
+		public const uint WM_DEADCHAR = 0x0103;
+		public const uint WM_SYSKEYDOWN = 0x0104;
+		public const uint WM_SYSKEYUP = 0x0105;
+		public const uint WM_SYSCHAR = 0x0106;
+
+		#endregion
+
+		#region BN_ constants
+
+		public const int BN_CLICKED = 0;
+		public const int BN_PAINT = 1;
+		public const int BN_HILITE = 2;
+		public const int BN_UNHILITE = 3;
+		public const int BN_DISABLE = 4;
+		public const int BN_DOUBLECLICKED = 5;
+		public const int BN_PUSHED = BN_HILITE;
+		public const int BN_UNPUSHED = BN_UNHILITE;
+		public const int BN_DBLCLK = BN_DOUBLECLICKED;
+		public const int BN_SETFOCUS = 6;
+		public const int BN_KILLFOCUS = 7;
 
 		#endregion
 
