@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Nano.Forms
@@ -18,6 +16,8 @@ namespace Nano.Forms
         public const AnchorStyles AnchorLeftBottom = AnchorStyles.Left | AnchorStyles.Bottom;
         public const AnchorStyles AnchorRightTop = AnchorStyles.Right | AnchorStyles.Top;
         public const AnchorStyles AnchorRightBottom = AnchorStyles.Right | AnchorStyles.Bottom;
+
+        public static int Margin = 8;
 
         public class PanelSplitResult
         {
@@ -46,5 +46,17 @@ namespace Nano.Forms
 
             return new PanelSplitResult { panel1 = split2.Panel1, panel2 = split2.Panel2, panel3 = split.Panel2 };
         }        
+
+        public static LinkLabel AddLinkHorz(Control parent, ref int x, int y, int w, int h, string text, string name = null, EventHandler onclick = null)
+        {
+            var link = new LinkLabel { Text = text, Name = name };
+            link.Location = new Point(x, y);
+            link.Size = new Size(w, h);
+            if (onclick != null)
+                link.Click += onclick;
+            parent.Controls.Add(link);
+            x = link.Right + Margin;
+            return link;
+        }
     }
 }

@@ -54,6 +54,14 @@ namespace Nano.Win32
 		[DllImport("user32.dll")]
 		public static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
 
+		// HWND GetForegroundWindow();
+		[DllImport("user32.dll")]
+		public static extern IntPtr GetForegroundWindow();
+
+		// BOOL SetForegroundWindow(HWND hWnd);
+		[DllImport("user32.dll")]
+		public static extern int SetForegroundWindow(IntPtr hWnd);
+
 		#endregion
 
 		// BOOL WINAPI GetCursorPos(_Out_ LPPOINT lpPoint);
@@ -64,13 +72,27 @@ namespace Nano.Win32
 
         public const uint WM_COMMAND = 0x0111;
 
+		public const uint WM_KEYDOWN = 0x0100;
+		public const uint WM_KEYUP = 0x0101;
+		public const uint WM_CHAR = 0x0102;
+		public const uint WM_DEADCHAR = 0x0103;
+		public const uint WM_SYSKEYDOWN = 0x0104;
+		public const uint WM_SYSKEYUP = 0x0105;
+		public const uint WM_SYSCHAR = 0x0106;
+
 		// BOOL PostMessageW(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 		[DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
 		public static extern int PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
+		[DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+		public static extern int PostMessage(IntPtr hWnd, uint Msg, uint wParam, uint lParam);
+
 		// LRESULT WINAPI SendMessage(_In_ HWND hWnd, _In_ UINT Msg, _In_ WPARAM wParam, _In_ LPARAM lParam);
 		[DllImport("user32.dll")]
 		public static extern IntPtr SendMessage(IntPtr hWnd, uint wMsg, UIntPtr wParam, IntPtr lParam);
+
+		[DllImport("user32.dll")]
+		public static extern IntPtr SendMessage(IntPtr hWnd, uint wMsg, uint wParam, uint lParam);
 
 		#endregion
 
@@ -98,11 +120,45 @@ namespace Nano.Win32
 		[DllImport("user32.dll", CharSet = CharSet.Unicode)]
 		public static extern uint GetMenuItemID(IntPtr hMenu, int nPos);
 
+		// BOOL GetMenuItemInfoW(HMENU hmenu, UINT item, BOOL fByPosition, LPMENUITEMINFOW lpmii);
+		[DllImport("user32.dll", CharSet = CharSet.Unicode)]
+		public static extern int GetMenuItemInfo(IntPtr hMenu, uint item, int fByPosition, ref MENUITEMINFO lpmii);
+		public const uint MIIM_STATE = 0x00000001;
+		public const uint MIIM_ID = 0x00000002;
+		public const uint MIIM_SUBMENU = 0x00000004;
+		public const uint MIIM_CHECKMARKS = 0x00000008;
+		public const uint MIIM_TYPE = 0x00000010;
+		public const uint MIIM_DATA = 0x00000020;
+		public const uint MIIM_STRING = 0x00000040;
+		public const uint MIIM_BITMAP = 0x00000080;
+		public const uint MIIM_FTYPE = 0x00000100;
+
+		public const uint MFT_OWNERDRAW = 0x100;
+		public const uint MFT_SEPARATOR = 0x800;
+
 		#endregion
 
 		// DWORD WINAPI GetWindowThreadProcessId(_In_ HWND hWnd, _Out_opt_ LPDWORD lpdwProcessId);
 		[DllImport("user32.dll")]
 		public static extern uint GetWindowThreadProcessId(IntPtr hwnd, ref uint processId);
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	public struct MENUITEMINFO
+	{
+		public uint cbSize;
+		public uint fMask;
+		public uint fType;
+		public uint fState;
+		public uint wID;
+		public IntPtr hSubMenu;
+		public IntPtr hbmpChecked;
+		public IntPtr hbmpUnchecked;
+		public IntPtr dwItemData;
+		public String dwTypeData;
+		public uint cch;
+		public IntPtr hbmpItem;
+		public static uint Size() => (uint)Marshal.SizeOf(typeof(MENUITEMINFO));
 	}
 
 	public class Window
