@@ -84,6 +84,10 @@ namespace Nano.Win32
 		[DllImport("user32.dll")]
 		public static extern IntPtr GetDlgItem(IntPtr hDlg, int nIDDlgItem);
 
+		// int GetDlgCtrlID(HWND hWnd);
+		[DllImport("user32.dll")]
+		public static extern int GetDlgCtrlID(IntPtr hWnd);
+
 		#region Message
 
 		// BOOL PostMessageW(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
