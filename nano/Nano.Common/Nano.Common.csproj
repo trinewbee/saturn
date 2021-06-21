@@ -1,33 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net40;net45;net472;netcoreapp2.2;netcoreapp3.0</TargetFrameworks>
+    <TargetFrameworks>net48;netcoreapp3.1;net5.0</TargetFrameworks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <PackageId>Cloudhua.Puff.Nano.Common</PackageId>
     <Authors>Cloudhua</Authors>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.1.0</Version>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net40' ">
-    <DefineConstants>NETFX;NETFX40;NETFX40_Compat</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
-    <DefineConstants>NETFX;NETFX45;NETFX40_Compat;NETFX45_Compat</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net472' ">
-    <DefineConstants>NETFX;NETFX472;NETFX40_Compat;NETFX45_Compat;NETFX472_Compat</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.2' ">
-    <DefineConstants>NETCORE;NETCORE22;NETCORE22_Compat</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.0' ">
-    <DefineConstants>NETCORE;NETCORE30;NETCORE22_Compat;NETCORE30_Compat</DefineConstants>
+    <Version>2.0.1</Version>
   </PropertyGroup>
 
 </Project>

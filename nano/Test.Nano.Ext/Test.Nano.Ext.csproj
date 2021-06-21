@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net40;net45;net472;netcoreapp2.2</TargetFrameworks>
+    <TargetFrameworks>net48;netcoreapp3.1;net5.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,21 +14,5 @@
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net40' ">
-    <DefineConstants>NETFX;NETFX40;NETFX40_Compat</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
-    <DefineConstants>NETFX;NETFX45;NETFX40_Compat;NETFX45_Compat</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net472' ">
-    <DefineConstants>NETFX;NETFX472;NETFX40_Compat;NETFX45_Compat;NETFX472_Compat</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.2' ">
-    <DefineConstants>NETCORE;NETCORE22;NETCORE22_Compat</DefineConstants>
-  </PropertyGroup>
 
 </Project>
