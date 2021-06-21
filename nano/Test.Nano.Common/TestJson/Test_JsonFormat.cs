@@ -71,10 +71,26 @@ namespace TestCommon.TestJson
             JNode v = JNode.Create(new {});
             assertStringEqual("{}", JNode.Stringify(v));
 
-#if NETFX
             v = JNode.Create(new { a = 1, b = "", c = 'c', d = true, e = (object)null });
-            assertStringEqual("{\"e\":null,\"d\":true,\"a\":1,\"c\":99,\"b\":\"\"}", JNode.Stringify(v));
+            string s = JNode.Stringify(v);
+            // https://docs.microsoft.com/zh-cn/dotnet/standard/frameworks
+#if NET48
+            Test.Assert(s == "{\"e\":null,\"d\":true,\"a\":1,\"c\":99,\"b\":\"\"}");
+#else
+            _checkJsonMap(s, "\"a\":1", "\"b\":\"\"", "\"c\":99", "\"d\":true", "\"e\":null");
 #endif
+        }
+
+        static void _checkJsonMap(string s, params string[] parts)
+        {
+            // NETCORE 下，枚举器生成的结果是乱序
+            Test.Assert(s[0] == '{' && s[s.Length - 1] == '}');
+            s = s.Substring(1, s.Length - 2);
+            var ss = s.Split(',');
+            Test.Assert(ss.Length == parts.Length);
+            Array.Sort(ss);
+            for (int i = 0; i < ss.Length; ++i)
+                Test.Assert(ss[i] == parts[i]);
         }
 
         public static void Run()

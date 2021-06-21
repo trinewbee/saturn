@@ -218,17 +218,15 @@ namespace TestCommon.TestJson
 
             //enum
             obj = JNode.Create(new { a = 1, b = true, c = "c", d = new { } });
-#if NETFX
-            var i = 0;
-            var sb = new StringBuilder();
+
+            var ss = new List<string>();
             foreach (var f in obj.Fields)
-            {
-                i++;
-                sb.Append(f.Value.ToString());
-            }
-            Test.Assert(i == 4);
-            assertStringEqual("Object[0]Integer(1)String(c)Boolean(True)", sb.ToString());
-#endif
+                ss.Add(f.Value.ToString());
+            Test.Assert(ss.Count == 4);
+
+            ss.Sort();
+            var line = string.Join(",", ss);
+            Test.Assert(line == "Boolean(True),Integer(1),Object[0],String(c)");
         }
 
         public static void Run()

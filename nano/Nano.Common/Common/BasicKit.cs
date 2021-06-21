@@ -1,7 +1,7 @@
 ﻿using System;
 
 namespace Nano.Common
-{
+{	
 	public static class BasicKit
 	{
 		public static void Release<T>(ref T obj, Action f) where T : class
@@ -39,5 +39,10 @@ namespace Nano.Common
 				o = null;
 			}
 		}
+
+		// https://docs.microsoft.com/zh-cn/dotnet/standard/frameworks
+		// 条件编译：目标框架
+#if NET48
+#endif
 	}
 }
