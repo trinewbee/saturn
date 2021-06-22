@@ -4,7 +4,7 @@ set tag=..\..\shared\cs
 
 rem Deploy components for PC
 for %%n in (
-  Nano.Common Nano.Extensive Nano.Obsolete
+  Nano.Common Nano.Extensive Nano.Obsolete Nano.Win32
   Nano.Sockets Nano.Rsa Nano.Test
 ) do (
   echo Project %%n
@@ -31,7 +31,7 @@ for %%n in (Nano.Forms) do (
 )
 
 rem Deploy components for PC (Net 48 only)
-for %%n in (Nano.Mysql Nano.Win32 Nano.Xapi) do (
+for %%n in (Nano.Mysql Nano.Xapi) do (
   echo Project %%n
   %cpcmd% %%n\bin\Release\net48\%%n.dll %tag%\net48\
   %cpcmd% %%n\bin\Release\net48\%%n.pdb %tag%\net48\
