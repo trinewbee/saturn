@@ -1,46 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net40;net472</TargetFrameworks>
+    <TargetFrameworks>net48</TargetFrameworks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Platforms>x86;x64</Platforms>
   </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net40' ">
-    <DefineConstants>NETFX;NETFX40;NETFX40_Compat</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net472' ">
-    <DefineConstants>NETFX;NETFX472;NETFX40_Compat;NETFX45_Compat;NETFX472_Compat</DefineConstants>
-  </PropertyGroup>
   
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
     <Reference Include="Nano.Common">
-      <HintPath>..\..\..\..\shared\cs\net40\Nano.Common.dll</HintPath>
+      <HintPath>..\..\..\..\shared\cs\net48\Nano.Common.dll</HintPath>
     </Reference>
     <Reference Include="Nano.Extensive">
-      <HintPath>..\..\..\..\shared\cs\net40\Nano.Extensive.dll</HintPath>
+      <HintPath>..\..\..\..\shared\cs\net48\Nano.Extensive.dll</HintPath>
     </Reference>
     <Reference Condition="'$(Platform)' == 'x86'" Include="CBFS6Net">
-      <HintPath>..\..\..\..\shared\cs\net40\x86\CBFS6Net.dll</HintPath>
+      <HintPath>..\..\..\..\shared\cs\3rdparty\cbfs\net40-x86\CBFS6Net.dll</HintPath>
     </Reference>
     <Reference Condition="'$(Platform)' == 'x64'" Include="CBFS6Net">
-      <HintPath>..\..\..\..\shared\cs\net40\x64\CBFS6Net.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
-    <Reference Include="Nano.Common">
-      <HintPath>..\..\..\..\shared\cs\net472\Nano.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Nano.Extensive">
-      <HintPath>..\..\..\..\shared\cs\net472\Nano.Extensive.dll</HintPath>
-    </Reference>
-    <Reference Condition="'$(Platform)' == 'x86'" Include="CBFS6Net">
-      <HintPath>..\..\..\..\shared\cs\net472\x86\CBFS6Net.dll</HintPath>
-    </Reference>
-    <Reference Condition="'$(Platform)' == 'x64'" Include="CBFS6Net">
-      <HintPath>..\..\..\..\shared\cs\net472\x64\CBFS6Net.dll</HintPath>
+      <HintPath>..\..\..\..\shared\cs\3rdparty\cbfs\net40-x64\CBFS6Net.dll</HintPath>
     </Reference>
   </ItemGroup>
 
