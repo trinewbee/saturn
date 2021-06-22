@@ -5,7 +5,7 @@ set tag=..\..\shared\cs
 rem Deploy components for PC
 for %%n in (
   Nano.Common Nano.Extensive Nano.Obsolete
-  Nano.Sockets Nano.Test
+  Nano.Sockets Nano.Rsa Nano.Test
 ) do (
   echo Project %%n
   for %%p in (net48 netcoreapp3.1 net5.0) do (
@@ -30,11 +30,11 @@ for %%n in (Nano.Forms) do (
   )
 )
 
-rem Deploy components for PC (Net 40 only)
-for %%n in (Nano.Mysql Nano.Rsa Nano.Win32 Nano.Xapi) do (
+rem Deploy components for PC (Net 48 only)
+for %%n in (Nano.Mysql Nano.Win32 Nano.Xapi) do (
   echo Project %%n
-  %cpcmd% %%n\bin\Release\%%n.dll %tag%\net40\
-  %cpcmd% %%n\bin\Release\%%n.pdb %tag%\net40\
+  %cpcmd% %%n\bin\Release\net48\%%n.dll %tag%\net48\
+  %cpcmd% %%n\bin\Release\net48\%%n.pdb %tag%\net48\
 )
 
 rem Deploy components for Android
