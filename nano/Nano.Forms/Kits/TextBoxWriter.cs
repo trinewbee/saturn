@@ -27,12 +27,8 @@ namespace Nano.Forms
                 m_textBox.AppendText(value);
         }
 
-        public override void WriteLine(string value)
-        {
-            if (m_textBox.InvokeRequired)
-                m_textBox.BeginInvoke((WriteDelegate)WriteLine, value);
-            else
-                m_textBox.AppendText(value + "\r\n");
-        }
+        public override void WriteLine(string value) => Write(value + "\r\n");
+
+        public override void WriteLine() => Write("\r\n");
     }
 }
