@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1;net6.0</TargetFrameworks>
     <Authors>Cloudhua</Authors>
     <PackageId>Cloudhua.PuffNetCore</PackageId>
     <Description>PuffServer是基于aspnet上开发的web应用服务</Description>
@@ -18,12 +18,12 @@
     </Reference>
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net5.0' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
     <Reference Include="Nano.Common">
-      <HintPath>..\..\..\shared\cs\net5.0\Nano.Common.dll</HintPath>
+      <HintPath>..\..\..\shared\cs\net6.0\Nano.Common.dll</HintPath>
     </Reference>
     <Reference Include="Nano.Extensive">
-      <HintPath>..\..\..\shared\cs\net5.0\Nano.Extensive.dll</HintPath>
+      <HintPath>..\..\..\shared\cs\net6.0\Nano.Extensive.dll</HintPath>
     </Reference>
   </ItemGroup>
   
