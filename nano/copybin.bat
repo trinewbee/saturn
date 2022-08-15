@@ -8,7 +8,7 @@ for %%n in (
   Nano.Sockets Nano.Rsa Nano.Test
 ) do (
   echo Project %%n
-  for %%p in (net48 netcoreapp3.1 net5.0) do (
+  for %%p in (net48 netcoreapp3.1 net6.0) do (
     %cpcmd% %%n\bin\Release\%%p\%%n.dll %tag%\%%p\
     %cpcmd% %%n\bin\Release\%%p\%%n.pdb %tag%\%%p\
   )
@@ -24,7 +24,7 @@ for %%n in (Nano.Forms) do (
 )
 for %%n in (Nano.Forms) do (
   echo Project %%n-windows
-  for %%p in (net5.0) do (
+  for %%p in (net6.0) do (
     %cpcmd% %%n\bin\Release\%%p-windows\%%n.dll %tag%\%%p\
     %cpcmd% %%n\bin\Release\%%p-windows\%%n.pdb %tag%\%%p\
   )
