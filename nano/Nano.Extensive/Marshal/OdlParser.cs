@@ -15,6 +15,7 @@ namespace Nano.Ext.Marshal
 		public string Name { get; }
 		public Dictionary<string, string> Attributes { get; }
 		public List<OdlNode> Children { get; }
+		public string this[string key] => Attributes[key];
 
 		public OdlNode(string name)
 		{

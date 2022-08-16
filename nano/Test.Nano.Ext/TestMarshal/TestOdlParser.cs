@@ -72,6 +72,17 @@ namespace TestExt
 			Test.Assert(node.Name == "props" && node.Attributes["rank"] == "1");
 		}
 
+		void testComments()
+		{
+			var lines = new string[] { "a # Line 1", "b / # Line 2", "# Line 3", "/a # Line 4" };
+            var root = m_parser.Parse(lines);
+			Test.Assert(root.Name == "a" && root.Attributes.Count == 0 && root.Children.Count == 1);
+
+			lines = new string[] { "a b=#c #", "/a" };
+            root = m_parser.Parse(lines);
+			Test.Assert(root.Name == "a" && root.Attributes.Count == 1 && root["b"] == "#c");
+        }
+
 		public static void Run()
 		{
 			Console.WriteLine($"TestMarshal.{nameof(TestOdlParser)}");
@@ -79,6 +90,7 @@ namespace TestExt
 			o.testSimple();
 			o.testAttrs();
 			o.testMultiLines();
-		}
+			o.testComments();
+        }
 	}
 }
