@@ -44,10 +44,10 @@ namespace TestExt
 			attrs = root.Attributes;
 			Test.Assert(attrs.Count == 2 && attrs["v1"] == "123L" && attrs["v2"] == "9876543210");
 
-			lines = new string[] { "a v=\"测试\" t /" };
+			lines = new string[] { "a v=\"测试\" t x= /" };
 			root = m_parser.Parse(lines);
 			attrs = root.Attributes;
-			Test.Assert(attrs.Count == 2 && attrs["v"] == "测试" && attrs["t"] == null);
+			Test.Assert(attrs.Count == 3 && attrs["v"] == "测试" && attrs["t"] == null && attrs["x"] == "");
 		}
 
 		void testMultiLines()
