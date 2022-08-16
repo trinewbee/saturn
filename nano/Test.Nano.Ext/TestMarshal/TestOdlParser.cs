@@ -19,7 +19,7 @@ namespace TestExt
 			var root = m_parser.Parse(lines);
 			Test.Assert(root.Name == "a");
 			var nodes = root.Children;
-			Test.Assert(nodes.Count == 2 && nodes[0].Name == "b1" && nodes[1].Name == "b2");
+			Test.Assert(nodes.Count == 2 && nodes[0].Name == "b1" && nodes[1].Name == "b2");			
 
 			lines = new string[] { "a", " b1 /", " b2/", "/a" };
 			root = m_parser.Parse(lines);
@@ -38,8 +38,11 @@ namespace TestExt
 			var root = m_parser.Parse(lines);
 			var attrs = root.Attributes;
 			Test.Assert(attrs.Count == 3 && attrs["name"] == "test" && attrs["code"] == "007" && attrs["value"] == "Hello world");
+            Test.Assert(root.HasAttr("name") && root.GetAttr("name") == "test");
+            Test.Assert(!root.HasAttr("nam") && root.GetAttr("nam") == null);
 
-			lines = new string[] { "a v1=123L v2=9876543210 /" };
+
+            lines = new string[] { "a v1=123L v2=9876543210 /" };
 			root = m_parser.Parse(lines);
 			attrs = root.Attributes;
 			Test.Assert(attrs.Count == 2 && attrs["v1"] == "123L" && attrs["v2"] == "9876543210");
@@ -47,7 +50,7 @@ namespace TestExt
 			lines = new string[] { "a v=\"测试\" t x= /" };
 			root = m_parser.Parse(lines);
 			attrs = root.Attributes;
-			Test.Assert(attrs.Count == 3 && attrs["v"] == "测试" && attrs["t"] == null && attrs["x"] == "");
+			Test.Assert(attrs.Count == 3 && attrs["v"] == "测试" && attrs["t"] == "" && attrs["x"] == "");
 		}
 
 		void testMultiLines()

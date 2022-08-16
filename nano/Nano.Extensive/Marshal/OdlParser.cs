@@ -24,6 +24,16 @@ namespace Nano.Ext.Marshal
 			Children = new List<OdlNode>();
 		}
 
+		public bool HasAttr(string key) => Attributes.ContainsKey(key);
+
+		public string GetAttr(string key)
+		{
+			string value;
+			if (Attributes.TryGetValue(key, out value))
+				return value;
+			return null;
+		}
+
 		public void AddNode(OdlNode node) => Children.Add(node);
 
 		public override string ToString() => "Node " + Name;
@@ -204,7 +214,7 @@ namespace Nano.Ext.Marshal
 					return true;
 				}
 				else if (ch <= ' ')
-					node.Attributes.Add(key, null);
+					node.Attributes.Add(key, "");
 				else
 					throw new NutsException("WrongSymbolAfterAttrKey");
 			}
