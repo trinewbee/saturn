@@ -88,5 +88,7 @@ namespace Nano.Forms.Miu
             topView?.InitUI(m_viewHost, true);
             return true;
         }
+
+        public void SetDoubleBuffered() => DoubleBuffered = true;
     }
 }
