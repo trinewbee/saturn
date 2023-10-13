@@ -32,17 +32,25 @@ namespace Nano.Logs
         bool m_console;
         TextWriter m_tw;
 
-        public MiniLog(bool console = true, string path = null)
+        public MiniLog(bool console, TextWriter tw)
         {
             Buffer = new MiniLogBuffer(1000);
             m_console = console;
+            m_tw = tw;
+        }
 
-            if (path != null)
-            {
-                var fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
-                fs.Seek(0, SeekOrigin.End);
-                m_tw = new StreamWriter(fs, Encoding.UTF8);
-            }
+        public MiniLog(bool console = true, string path = null) : this(console, CreateWriter(path))
+        {
+        }
+
+        static TextWriter CreateWriter(string path)
+        {
+            if (path == null)
+                return null;
+            
+            var fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
+            fs.Seek(0, SeekOrigin.End);
+            return new StreamWriter(fs, Encoding.UTF8);
         }
 
         public void WriteLine(string s)
