@@ -30,5 +30,7 @@ namespace Nano.Forms
         public override void WriteLine(string value) => Write(value + "\r\n");
 
         public override void WriteLine() => Write("\r\n");
+
+        public void Clear() => m_textBox.Clear();
     }
 }
