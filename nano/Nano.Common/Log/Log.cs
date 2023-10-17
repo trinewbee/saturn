@@ -29,14 +29,20 @@ namespace Nano.Logs
     {
         public MiniLogBuffer Buffer { get; private set; }
 
-        bool m_console;
-        TextWriter m_tw;
+        TextWriter m_tw1, m_tw2;
+
+        public MiniLog(TextWriter tw1, TextWriter tw2)
+        {
+            Buffer = new MiniLogBuffer(1000);
+            m_tw1 = tw1;
+            m_tw2 = tw2;
+        }
 
         public MiniLog(bool console, TextWriter tw)
         {
             Buffer = new MiniLogBuffer(1000);
-            m_console = console;
-            m_tw = tw;
+            m_tw1 = console ? Console.Out : null;
+            m_tw2 = tw;
         }
 
         public MiniLog(bool console = true, string path = null) : this(console, CreateWriter(path))
@@ -59,28 +65,42 @@ namespace Nano.Logs
             lock (Buffer)
                 Buffer.Add(dt.Ticks, s);
 
-            if (m_console || m_tw != null)
+            if (m_tw1 != null || m_tw2 != null)
             {
                 var ds = dt.ToLocalTime().ToString("yyyy/MM/dd HH:mm:ss ") + s;
-                if (m_tw != null)
-                {
-                    lock (m_tw)
-                        m_tw.WriteLine(ds);
-                }                
-                if (m_console)
-                    Console.WriteLine(ds);
+                LockWriteLine(m_tw1, ds);
+                LockWriteLine(m_tw2, ds);
             }
         }
 
-        public void Flush() => m_tw?.Flush();
+        static void LockWriteLine(TextWriter tw, string s)
+        {
+            if (tw != null)
+            {
+                lock (tw)
+                    tw.WriteLine(s);
+            }
+        }
+
+        public void Flush()
+        {
+            m_tw1?.Flush();
+            m_tw2?.Flush();
+        }
 
         public void Close()
         {
-            if (m_tw != null)
+            CloseWriter(ref m_tw1);
+            CloseWriter(ref m_tw2);
+        }
+
+        static void CloseWriter(ref TextWriter tw)
+        {
+            if (tw != null && tw != Console.Out)
             {
-                m_tw.Flush();
-                m_tw.Close();
-                m_tw = null;
+                tw.Flush();
+                tw.Close();
+                tw = null;
             }
         }
     }
