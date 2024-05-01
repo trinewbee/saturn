@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace Nano.Forms
 {
-    public static class LayoutTools
+    public static class LayoutTool
     {
         public const AnchorStyles AnchorFill = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom;
         public const AnchorStyles AnchorWidth = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;

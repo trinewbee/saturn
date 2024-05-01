@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Nano.Forms
@@ -57,4 +54,27 @@ namespace Nano.Forms
 			}
 		}
 	}
+
+	public static class FormKit
+	{
+        public static string GetSenderName(object sender)
+        {
+            if (sender is Control)
+                return ((Control)sender).Name;
+            else if (sender is ToolStripItem)
+                return ((ToolStripItem)sender).Name;
+            else
+                throw new NotSupportedException();
+        }
+
+        public static object GetSenderTag(object sender)
+        {
+            if (sender is Control)
+                return ((Control)sender).Tag;
+            else if (sender is ToolStripItem)
+                return ((ToolStripItem)sender).Tag;
+            else
+                throw new NotSupportedException();
+        }
+    }
 }
