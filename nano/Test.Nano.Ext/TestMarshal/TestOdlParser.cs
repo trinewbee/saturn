@@ -55,7 +55,7 @@ namespace TestExt
 
 		void testMultiLines()
 		{
-			var lines = new string[] { "a -", "-", "name=test /" };
+			var lines = new string[] { "a --", "--", "name=test /" };
 			var root = m_parser.Parse(lines);
 			Test.Assert(root.Name == "a");
 			var attrs = root.Attributes;

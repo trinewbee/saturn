@@ -91,10 +91,10 @@ namespace Nano.Ext.Marshal
 				var pos = LastNonSpace(line);				
 
 				// 处理续行符号
-				if (pos >= 0 && line[pos] == '-' && (pos < 1 || line[pos - 1] <= ' '))
+				if (pos >= 1 && line[pos] == '-' && line[pos - 1] == '-' && (pos < 2 || line[pos - 2] <= ' '))
 				{
 					// 本行末尾有续行符号
-					line = line.Substring(0, pos); // 去掉末尾的 - 号
+					line = line.Substring(0, pos - 1); // 去掉末尾的 -- 号
 					lastLine = lastLine != null ? lastLine + line : line;
 					continue;
 				}
