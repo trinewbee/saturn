@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Nano.Ext.Marshal;
 using Nano.UnitTest;
 
@@ -75,7 +72,16 @@ namespace TestExt
 			Test.Assert(node.Name == "props" && node.Attributes["rank"] == "1");
 		}
 
-		void testComments()
+		void testWholeLineAttr()
+		{
+            var lines = new string[] { "p name=Zhang @desc: male 29", "/p" };
+            var root = m_parser.Parse(lines);
+            Test.Assert(root.Name == "p");
+            var attrs = root.Attributes;
+            Test.Assert(attrs.Count == 2 && attrs["name"] == "Zhang");
+        }
+
+        void testComments()
 		{
 			var lines = new string[] { "a # Line 1", "b / # Line 2", "# Line 3", "/a # Line 4" };
             var root = m_parser.Parse(lines);
@@ -93,7 +99,8 @@ namespace TestExt
 			o.testSimple();
 			o.testAttrs();
 			o.testMultiLines();
-			o.testComments();
+			o.testWholeLineAttr();
+            o.testComments();
         }
 	}
 }

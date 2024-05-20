@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.IO;
 using System.Diagnostics;
@@ -181,10 +180,15 @@ namespace Nano.Ext.Marshal
 					ExamContentAfterClosingSymbol(s, pos);
 					return true;
 				}
-				else if (ch == '#') // comments
-					return false;
+				else if (ch == '@') // Whole line element
+				{
+					ParseWholeLineAttr(node, s, pos);
+                    return false;
+				}
+                else if (ch == '#') // comments
+                    return false;
 
-				var key = ParseIdent(s, ref pos);
+                var key = ParseIdent(s, ref pos);
 				ch = pos < s.Length ? s[pos] : (char)0;
 				if (ch == '=')
 				{
@@ -221,7 +225,19 @@ namespace Nano.Ext.Marshal
 			return false;
 		}
 
-		void ParseMultiLineAttr(string s, int pos, IEnumerator<string> elines)
+		// 解析整行属性
+		void ParseWholeLineAttr(OdlNode node, string s, int pos)
+		{
+			G.Verify(s[pos] == '@', "AtSymbolRequired");
+            ++pos;
+            var ident = ParseIdent(s, ref pos);
+			G.Verify(s[pos] == ':', "CommaSymbolRequired");
+			pos = LexParser.EatSpaces(s, pos + 1);
+			var str = s.Substring(pos);
+			node.Attributes.Add(ident, str);
+        }
+
+        void ParseMultiLineAttr(string s, int pos, IEnumerator<string> elines)
 		{
 			Debug.Assert(s[pos] == '@');
 
@@ -252,7 +268,7 @@ namespace Nano.Ext.Marshal
 				sb.Append(s);
 			}
 
-			throw new Exception("AttrNotCompleted");
+			throw new NutsException("AttrNotCompleted");
 		}
 
 		static void ExamContentAfterClosingSymbol(string s, int pos)
@@ -283,7 +299,7 @@ namespace Nano.Ext.Marshal
 
 		public static bool IsIdentChar(char ch) =>
 			(ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') ||
-			ch == '-' || ch == '_' || ch == '.' || ch == ':';
+			ch == '-' || ch == '_' || ch == '.';
 
 		public static int LastNonSpace(string s, int pos = -1)
 		{
