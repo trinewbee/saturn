@@ -237,15 +237,27 @@ namespace Nano.Ext.Marshal
 			node.Attributes.Add(ident, str);
         }
 
+		// 解析多行属性或整行属性
         void ParseMultiLineAttr(string s, int pos, IEnumerator<string> elines)
 		{
-			Debug.Assert(s[pos] == '@');
-
-			G.Verify(m_stack.Count != 0, "NoMatchingNode");
+            G.Verify(s[pos] == '@', "AtSymbolRequired");
+            G.Verify(m_stack.Count != 0, "NoMatchingNode");
 
 			++pos;
 			var ident = ParseIdent(s, ref pos);
-			ExamContentAfterClosingSymbol(s, pos);
+            pos = LexParser.EatSpaces(s, pos);
+			var ch = PeekChar(s, pos);
+			if (ch == ':')
+			{
+				// 整行属性
+				pos = LexParser.EatSpaces(s, pos + 1);
+				var str = s.Substring(pos);
+				var node = m_stack.Peek();
+				node.Attributes.Add(ident, str);
+				return;
+			}
+			else if (ch != '\0' && ch != '#')
+				throw new NutsException("ContentsAfterCloseSymbol");            
 
 			var sb = new StringBuilder();
 			while (elines.MoveNext())
@@ -269,7 +281,7 @@ namespace Nano.Ext.Marshal
 			}
 
 			throw new NutsException("AttrNotCompleted");
-		}
+		}		
 
 		static void ExamContentAfterClosingSymbol(string s, int pos)
 		{
@@ -277,7 +289,9 @@ namespace Nano.Ext.Marshal
 			G.Verify(pos >= s.Length || s[pos] == '#', "ContentsAfterCloseSymbol");
 		}
 
-		public static string ParseIdent(string s, ref int pos)
+        public static char PeekChar(string s, int pos) => pos < s.Length ? s[pos] : '\0';
+
+        public static string ParseIdent(string s, ref int pos)
 		{
 			var ch = s[pos];
 			G.Verify(IsIdentHead(ch), "InvalidIdentChar");

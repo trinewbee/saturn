@@ -78,7 +78,18 @@ namespace TestExt
             var root = m_parser.Parse(lines);
             Test.Assert(root.Name == "p");
             var attrs = root.Attributes;
-            Test.Assert(attrs.Count == 2 && attrs["name"] == "Zhang");
+            Test.Assert(attrs.Count == 2 && attrs["name"] == "Zhang" && attrs["desc"] == "male 29");
+
+			lines = new string[] { 
+				"p name=Wang @desc: male 29", 
+				"@profile: xxx ## yyy /", 
+				"@edu", "2001", "2005", "/@edu",
+				"/p"
+			};
+            root = m_parser.Parse(lines);
+            attrs = root.Attributes;
+            Test.Assert(attrs.Count == 4 && attrs["name"] == "Wang" && attrs["desc"] == "male 29");
+			Test.Assert(attrs["profile"] == "xxx ## yyy /" && attrs["edu"] == "2001\n2005");
         }
 
         void testComments()
