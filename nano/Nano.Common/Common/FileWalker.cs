@@ -41,7 +41,7 @@ namespace Nano.Common
 		static string GetRelSub(string pathRelParent, string pathAbs)
 		{
 			string name = Path.GetFileName(pathAbs);
-			return pathRelParent.Length != 0 ? pathRelParent + '\\' + name : name;
+			return pathRelParent.Length != 0 ? pathRelParent + Path.DirectorySeparatorChar + name : name;
 		}
 	}
 
