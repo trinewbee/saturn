@@ -14,24 +14,28 @@ namespace Nano.Common
 			void GetFile(string pathRel);
 		}
 
-		public static void Walk(string path, INotify notify)
+		public static void Walk(string path, INotify notify, bool sort = false)
 		{
-			WalkFolder(path, "", notify);
+			WalkFolder(path, "", notify, sort);
 		}
 
-		static void WalkFolder(string pathAbs, string pathRel, INotify notify)
+		static void WalkFolder(string pathAbs, string pathRel, INotify notify, bool sort)
 		{
 			string[] ss = Directory.GetDirectories(pathAbs);
+			if (sort)
+				Array.Sort(ss, StringComparer.CurrentCultureIgnoreCase);
 			foreach (string s in ss)
 			{
 				string pathRelSub = GetRelSub(pathRel, s);
 				notify.EnterFolder(pathRelSub);
-				WalkFolder(s, pathRelSub, notify);
+				WalkFolder(s, pathRelSub, notify, sort);
 				notify.LeaveFolder(pathRelSub);
 			}
 
 			ss = Directory.GetFiles(pathAbs);
-			foreach (string s in ss)
+            if (sort)
+                Array.Sort(ss, StringComparer.CurrentCultureIgnoreCase);
+            foreach (string s in ss)
 			{
 				string pathRelSub = GetRelSub(pathRel, s);
 				notify.GetFile(pathRelSub);
