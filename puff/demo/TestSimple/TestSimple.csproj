@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net48;netcoreapp3.1;net6.0</TargetFrameworks>
+    <TargetFrameworks>net48;net6.0;net8.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
@@ -47,6 +47,21 @@
     </Reference>
     <Reference Include="Nano.Test">
       <HintPath>..\..\..\..\shared\cs\net6.0\Nano.Test.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
+    <Reference Include="Nano.Common">
+      <HintPath>..\..\..\..\shared\cs\net8.0\Nano.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Nano.Extensive">
+      <HintPath>..\..\..\..\shared\cs\net8.0\Nano.Extensive.dll</HintPath>
+    </Reference>
+    <Reference Include="Nano.Sockets">
+      <HintPath>..\..\..\..\shared\cs\net8.0\Nano.Sockets.dll</HintPath>
+    </Reference>
+    <Reference Include="Nano.Test">
+      <HintPath>..\..\..\..\shared\cs\net8.0\Nano.Test.dll</HintPath>
     </Reference>
   </ItemGroup>
 
