@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net48;netcoreapp3.1;net6.0</TargetFrameworks>
+    <TargetFrameworks>net48;net6.0;net8.0</TargetFrameworks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
 
@@ -31,5 +31,14 @@
       <HintPath>..\..\..\shared\cs\net6.0\Nano.Test.dll</HintPath>
     </Reference>
   </ItemGroup>
-  
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
+    <Reference Include="Nano.Common">
+      <HintPath>..\..\..\shared\cs\net8.0\Nano.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Nano.Test">
+      <HintPath>..\..\..\shared\cs\net8.0\Nano.Test.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
