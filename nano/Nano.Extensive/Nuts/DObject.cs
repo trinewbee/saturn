@@ -48,12 +48,57 @@ namespace Nano.Nuts
 
         #endregion
 
-        #region 创建对象
+        #region Properties
 
-        const string _ns = "Nano.Nuts";
-        const string _vt_do = _ns + ".DObject";
-        const string _vt_dl = _vt_do + "+DList";
-        const string _vt_dm = _vt_do + "+DMap";
+        static Dictionary<Type, JsonNodeType> _node_type_map = new Dictionary<Type, JsonNodeType>
+        {
+            [typeof(long)] = JsonNodeType.Integer,
+            [typeof(double)] = JsonNodeType.Float,
+            [typeof(string)] = JsonNodeType.String,
+            [typeof(bool)] = JsonNodeType.Boolean,
+            [typeof(DList)] = JsonNodeType.NodeList,
+            [typeof(DMap)] = JsonNodeType.Dictionary,
+        };
+
+        public JsonNodeType NodeType
+        {
+            get
+            {
+                if (m_value == null)
+                    return JsonNodeType.Null;
+
+                JsonNodeType result;
+                var vt = m_value.GetType();
+                if (_node_type_map.TryGetValue(vt, out result))
+                    return result;
+
+                throw new ArgumentException("Wrong DObject type: " + vt.Name);
+            }
+        }
+
+        public static DObject Null => new DObject { m_value = null };
+
+        public bool IsNull => m_value == null;
+
+        public bool IsInt => m_value is long;
+
+        public bool IsFloat => m_value is double;
+
+        public bool IsBool => m_value is bool;
+
+        public bool IsString => m_value is string;
+
+        public bool IsList => m_value is DList;
+
+        public bool IsMap => m_value is DMap;
+
+        public DList List => (DList)m_value;
+
+        public DMap Map => (DMap)m_value;
+
+        #endregion
+
+        #region 创建对象
 
         const System.Reflection.BindingFlags bind_flags = System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance;
 
@@ -66,51 +111,34 @@ namespace Nano.Nuts
                 return new DObject();
 
             var vt = o.GetType();
-            switch (vt.FullName)
+            if (_node_type_map.ContainsKey(vt))            
+                return new DObject { m_value = o };
+
+            if (vt.IsPrimitive)
             {
-                case "System.Int64":
-                case "System.Double":
-                case "System.String":
-                case "System.Boolean":
-                case _vt_dl:
-                case _vt_dm:
-                    return new DObject { m_value = o };
-                case "System.Int32":
+                if (vt == typeof(int))
                     return new DObject { m_value = (long)(int)o };
-                case "System.UInt32":
+                else if (vt == typeof(uint))
                     return new DObject { m_value = (long)(uint)o };
-                case "System.UInt64":
+                else if (vt == typeof(ulong))
                     return new DObject { m_value = (long)(ulong)o };
-                case "System.Single":
+                else if (vt == typeof(float))
                     return new DObject { m_value = (double)(float)o };
-                case _vt_do:
-                    return new DObject { m_value = ((DObject)o).m_value };
-                case "Nano.Json.JsonNode":
-                    return ImportJson((JsonNode)o);
-                case "System.Byte":
-                case "System.SByte":
-                case "System.Int16":
-                case "System.UInt16":
-                case "System.DateTime":
+                else // byte, sbyte, short, ushort, ...
                     throw new NotSupportedException();
-                default:
-                    return _NewExt(o, vt);
             }
-        }
-
-        public static DObject Null => new DObject { m_value = null };
-
-        static DObject _NewExt(object o, Type vt)
-        {
-            if (vt.IsArray)
+            else if (vt == typeof(DObject))
+                return new DObject { m_value = ((DObject)o).m_value };
+            else if (vt == typeof(JsonNode))
+                return ImportJson((JsonNode)o);
+            else if (vt.IsArray)
             {
                 var arr = (Array)o;
                 if (arr.Rank != 1)
-                    throw new NotSupportedException("Dimension over 1");
-
+                    throw new NotSupportedException("MuitiDimArrayNotSupported");
                 return Transform(arr, oi => New(oi));
             }
-            else if (IsCompilerGenerated(vt))
+            else if (IsCompilerGenerated(vt)) // anonymous class
             {
                 var props = vt.GetProperties(bind_flags);
                 var map = new DMap();
@@ -121,12 +149,12 @@ namespace Nano.Nuts
                 }
                 return New(map);
             }
-            else if (BaseMapType.IsInstanceOfType(o))
+            else if (BaseMapType.IsInstanceOfType(o)) // IDictionary
                 return _NewMap((System.Collections.IDictionary)o);
-            else if (BaseListType.IsInstanceOfType(o))
+            else if (BaseListType.IsInstanceOfType(o)) // IList
                 return _NewList((System.Collections.IList)o);
             else
-                return _NewNormal(o, vt);
+                return _NewNormalClass(o, vt);
         }
 
         static DObject _NewMap(System.Collections.IDictionary map)
@@ -151,7 +179,7 @@ namespace Nano.Nuts
             return New(dls);
         }
 
-        static DObject _NewNormal(object o, Type vt)
+        static DObject _NewNormalClass(object o, Type vt)
         {
             var fields = vt.GetFields(bind_flags);
             var map = new DMap();
@@ -240,49 +268,6 @@ namespace Nano.Nuts
 		public static bool operator true(DObject o) => (bool)o.m_value;
 
 		public static bool operator false(DObject o) => !(bool)o.m_value;
-
-        public JsonNodeType NodeType => GetNodeType();
-
-        static Dictionary<Type, JsonNodeType> _node_type_map = new Dictionary<Type, JsonNodeType>
-        {
-            [typeof(long)] = JsonNodeType.Integer,
-            [typeof(double)] = JsonNodeType.Float,
-            [typeof(string)] = JsonNodeType.String,
-            [typeof(bool)] = JsonNodeType.Boolean,
-            [typeof(DList)] = JsonNodeType.NodeList,
-            [typeof(DMap)] = JsonNodeType.Dictionary,
-        };
-
-        public JsonNodeType GetNodeType()
-        {
-            if (m_value == null)
-                return JsonNodeType.Null;
-
-            JsonNodeType result;
-            var vt = m_value.GetType();
-            if (_node_type_map.TryGetValue(vt, out result))
-                return result;
-
-            throw new ArgumentException("Wrong DObject type: " + vt.Name);
-        }
-
-		public bool IsNull => m_value == null;
-
-        public bool IsInt => m_value is long;
-
-        public bool IsFloat => m_value is double;
-
-        public bool IsBool => m_value is bool;
-
-        public bool IsString => m_value is string;
-
-        public bool IsList => m_value is DList;
-
-        public bool IsMap => m_value is DMap;
-
-		public DList List => (DList)m_value;
-
-		public DMap Map => (DMap)m_value;
 
         public JsonNode ToJson() => ExportJson(this);
 
@@ -435,23 +420,20 @@ namespace Nano.Nuts
 				return new JsonNode(JsonNodeType.Null);
 
 			var vt = value.GetType();
-			switch (vt.FullName)
-			{
-				case "System.Int64":
-					return new JsonNode((long)value);
-				case "System.Double":
-					return new JsonNode((double)value);
-				case "System.String":
-					return new JsonNode((string)value);
-				case "System.Boolean":
-					return new JsonNode((bool)value);
-				case _vt_dl:
-					return ExportJsonList((DList)value);
-				case _vt_dm:
-					return ExportJsonDictionary((DMap)value);
-				default:
-					throw new InvalidCastException();
-			}
+            if (vt == typeof(long))
+                return new JsonNode((long)value);
+            else if (vt == typeof(double))
+                return new JsonNode((double)value);
+            else if (vt == typeof(string))
+                return new JsonNode((string)value);
+            else if (vt == typeof(bool))
+                return new JsonNode((bool)value);
+            else if (vt == typeof(DList))
+                return ExportJsonList((DList)value);
+            else if (vt == typeof(DMap))
+                return ExportJsonDictionary((DMap)value);
+            else
+                throw new InvalidCastException(vt.Name);
 		}
 
 		static JsonNode ExportJsonList(DList ls)
@@ -494,35 +476,30 @@ namespace Nano.Nuts
 			}
 
 			var vt = value.GetType();
-			switch (vt.FullName)
-			{
-				case "System.Int64":
-					jw.WriteInt(name, (long)value);
-					break;
-				case "System.Double":
-					jw.WriteFloat(name, (double)value);
-					break;
-				case "System.String":
-					jw.WriteString(name, (string)value);
-					break;
-				case "System.Boolean":
-					jw.WriteBool(name, (bool)value);
-					break;
-				case _vt_dl:
-					jw.BeginList(name);
-					foreach (var item in (DList)value)
-						WriteJsonStr(jw, item, null);
-					jw.EndList();
-					break;
-				case _vt_dm:
-					jw.BeginDictionary(name);
-					foreach (var pair in (DMap)value)
-						WriteJsonStr(jw, pair.Value, pair.Key);
-					jw.EndDictionary();
-					break;
-				default:
-					throw new InvalidCastException();
-			}
+            if (vt == typeof(long))
+                jw.WriteInt(name, (long)value);
+            else if (vt == typeof(double))
+                jw.WriteFloat(name, (double)value);
+            else if (vt == typeof(string))
+                jw.WriteString(name, (string)value);
+            else if (vt == typeof(bool))
+                jw.WriteBool(name, (bool)value);
+            else if (vt == typeof(DList))
+            {
+                jw.BeginList(name);
+                foreach (var item in (DList)value)
+                    WriteJsonStr(jw, item, null);
+                jw.EndList();
+            }
+            else if (vt == typeof(DMap))
+            {
+                jw.BeginDictionary(name);
+                foreach (var pair in (DMap)value)
+                    WriteJsonStr(jw, pair.Value, pair.Key);
+                jw.EndDictionary();
+            }
+            else
+                throw new InvalidCastException(vt.Name);
 		}
 
 		#endregion
