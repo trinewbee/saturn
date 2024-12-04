@@ -21,7 +21,7 @@ namespace Puff.NetCore
             var strJn = DObject.ImportJson(value);
             foreach (var key in filterKeys)
             {
-                if (strJn.IsNull())
+                if (strJn.IsNull)
                     continue;
                 if (strJn.HasKey(key))
                 {
