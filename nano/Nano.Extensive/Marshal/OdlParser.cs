@@ -87,7 +87,7 @@ namespace Nano.Ext.Marshal
 			while (elines.MoveNext())
 			{
 				var line = elines.Current;
-				var pos = LastNonSpace(line);				
+				var pos = LastNonSpace(line);
 
 				// 处理续行符号
 				if (pos >= 1 && line[pos] == '-' && line[pos - 1] == '-' && (pos < 2 || line[pos - 2] <= ' '))
@@ -181,10 +181,7 @@ namespace Nano.Ext.Marshal
 					return true;
 				}
 				else if (ch == '@') // Whole line element
-				{
-					ParseWholeLineAttr(node, s, pos);
-                    return false;
-				}
+					return ParseWholeLineAttr(node, s, pos);
                 else if (ch == '#') // comments
                     return false;
 
@@ -225,19 +222,33 @@ namespace Nano.Ext.Marshal
 			return false;
 		}
 
-		// 解析整行属性
-		void ParseWholeLineAttr(OdlNode node, string s, int pos)
+        // 解析元素行的整行属性
+        bool ParseWholeLineAttr(OdlNode node, string s, int pos)
 		{
 			G.Verify(s[pos] == '@', "AtSymbolRequired");
             ++pos;
             var ident = ParseIdent(s, ref pos);
 			G.Verify(s[pos] == ':', "CommaSymbolRequired");
 			pos = LexParser.EatSpaces(s, pos + 1);
-			var str = s.Substring(pos);
-			node.Attributes.Add(ident, str);
+
+			// 处理元素行的整行属性，末尾包含 / 关闭符号的特殊场景 (/ 前面必须有至少一个空格，否则被视为属性值的一部分)
+			// 独立的整行属性，末尾 / 仍然被视为属性值的一部分
+            var pos2 = LastNonSpace(s);
+			if (pos2 >= pos && pos2 < s.Length && s[pos2] == '/' && s[pos2 - 1] <= 32)
+			{
+				var str = s.Substring(pos, pos2 - pos - 1).TrimEnd();
+                node.Attributes.Add(ident, str);
+				return true;
+            }
+			else
+			{
+                var str = s.Substring(pos).TrimEnd();
+                node.Attributes.Add(ident, str);
+				return false;
+            }
         }
 
-		// 解析多行属性或整行属性
+		// 解析多行属性或独立整行属性
         void ParseMultiLineAttr(string s, int pos, IEnumerator<string> elines)
 		{
             G.Verify(s[pos] == '@', "AtSymbolRequired");
@@ -251,7 +262,7 @@ namespace Nano.Ext.Marshal
 			{
 				// 整行属性
 				pos = LexParser.EatSpaces(s, pos + 1);
-				var str = s.Substring(pos);
+				var str = s.Substring(pos).TrimEnd();
 				var node = m_stack.Peek();
 				node.Attributes.Add(ident, str);
 				return;

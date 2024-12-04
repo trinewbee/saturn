@@ -70,7 +70,12 @@ namespace TestExt
 			Test.Assert(attrs["name"] == "Zhang" && attrs["desc"] == "Line 1\nLine 2");
 			var node = root.Children[0];
 			Test.Assert(node.Name == "props" && node.Attributes["rank"] == "1");
-		}
+
+			// 多行属性属性值前后的空格，都不会被去掉
+			lines = new string[] { "a", "@c", "  x  ", "/@c", "/a" };
+            root = m_parser.Parse(lines);
+            Test.Assert(root.Name == "a" && root.Attributes.Count == 1 && root.Attributes["c"] == "  x  ");
+        }
 
 		void testWholeLineAttr()
 		{
@@ -90,6 +95,36 @@ namespace TestExt
             attrs = root.Attributes;
             Test.Assert(attrs.Count == 4 && attrs["name"] == "Wang" && attrs["desc"] == "male 29");
 			Test.Assert(attrs["profile"] == "xxx ## yyy /" && attrs["edu"] == "2001\n2005");
+
+			// 元素行的整行属性，后面可以接元素关闭符号 /
+			lines = new string[] { "a @c: x /" };
+            root = m_parser.Parse(lines);
+			Test.Assert(root.Name == "a" && root.Attributes.Count == 1 && root.Attributes["c"] == "x");
+
+			// 元素行的整行属性，末尾的 / 前面如果没有空格，被视为属性值的一部分，不是元素关闭符号
+			lines = new string[] { "a @c: x/", "/a" };
+            root = m_parser.Parse(lines);
+            Test.Assert(root.Name == "a" && root.Attributes.Count == 1 && root.Attributes["c"] == "x/");
+
+			// 非元素行的整行属性，末尾的 / 均不视为元素关闭符号
+			lines = new string[] { "a", "@c: x /", "/a" };
+            root = m_parser.Parse(lines);
+            Test.Assert(root.Name == "a" && root.Attributes.Count == 1 && root.Attributes["c"] == "x /");
+
+            // 整行属性的属性值前后的空格，都会被自动清除
+            lines = new string[] { "a @c: \t x \t ", "/a" };
+            root = m_parser.Parse(lines);
+            Test.Assert(root.Name == "a" && root.Attributes.Count == 1 && root.Attributes["c"] == "x");
+
+            // 整行属性的属性值前后的空格，都会被自动清除
+            lines = new string[] { "a @c: \t x \t /" };
+            root = m_parser.Parse(lines);
+            Test.Assert(root.Name == "a" && root.Attributes.Count == 1 && root.Attributes["c"] == "x");
+
+			// 整行属性的属性值前后的空格，都会被自动清除
+			lines = new string[] { "a", "@c: \t x \t ", "/a" };
+            root = m_parser.Parse(lines);
+            Test.Assert(root.Name == "a" && root.Attributes.Count == 1 && root.Attributes["c"] == "x");
         }
 
         void testComments()
@@ -101,6 +136,10 @@ namespace TestExt
 			lines = new string[] { "a b=#c #", "/a" };
             root = m_parser.Parse(lines);
 			Test.Assert(root.Name == "a" && root.Attributes.Count == 1 && root["b"] == "#c");
+
+			lines = new string[] { "a @c: x # y", "/a" };
+            root = m_parser.Parse(lines);
+            Test.Assert(root.Name == "a" && root.Attributes.Count == 1 && root["c"] == "x # y");
         }
 
 		public static void Run()
