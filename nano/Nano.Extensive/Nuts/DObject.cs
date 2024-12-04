@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Dynamic;
 using System.Diagnostics;
 using Nano.Json;
 
 namespace Nano.Nuts
 {
-    /// <summary>用于 Nuts 的动态数据类</summary>
-    public class DObject : DynamicObject
+    /// <summary>Json 节点类</summary>
+    /// <remarks>本对象用于替代 JsonNode 以及衍生类</remarks>
+    public class DObject
     {
         public class DList : List<DObject>
         {
@@ -58,6 +57,9 @@ namespace Nano.Nuts
 
         const System.Reflection.BindingFlags bind_flags = System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance;
 
+        static readonly Type BaseMapType = typeof(System.Collections.IDictionary);
+        static readonly Type BaseListType = typeof(System.Collections.IList);
+
         public static DObject New(object o)
         {
             if (o == null)
@@ -96,10 +98,7 @@ namespace Nano.Nuts
             }
         }
 
-        public static DObject Null() => new DObject { m_value = null };
-
-        static Type TY_MAP = typeof(System.Collections.IDictionary);
-        static Type TY_LIST = typeof(System.Collections.IList);
+        public static DObject Null => new DObject { m_value = null };
 
         static DObject _NewExt(object o, Type vt)
         {
@@ -122,9 +121,9 @@ namespace Nano.Nuts
                 }
                 return New(map);
             }
-            else if (TY_MAP.IsInstanceOfType(o))
+            else if (BaseMapType.IsInstanceOfType(o))
                 return _NewMap((System.Collections.IDictionary)o);
-            else if (TY_LIST.IsInstanceOfType(o))
+            else if (BaseListType.IsInstanceOfType(o))
                 return _NewList((System.Collections.IList)o);
             else
                 return _NewNormal(o, vt);
@@ -242,47 +241,48 @@ namespace Nano.Nuts
 
 		public static bool operator false(DObject o) => !(bool)o.m_value;
 
+        public JsonNodeType NodeType => GetNodeType();
+
+        static Dictionary<Type, JsonNodeType> _node_type_map = new Dictionary<Type, JsonNodeType>
+        {
+            [typeof(long)] = JsonNodeType.Integer,
+            [typeof(double)] = JsonNodeType.Float,
+            [typeof(string)] = JsonNodeType.String,
+            [typeof(bool)] = JsonNodeType.Boolean,
+            [typeof(DList)] = JsonNodeType.NodeList,
+            [typeof(DMap)] = JsonNodeType.Dictionary,
+        };
+
         public JsonNodeType GetNodeType()
         {
             if (m_value == null)
                 return JsonNodeType.Null;
-            var vtname = m_value.GetType().Name;
-            switch (vtname)
-            {
-                case "Int64":
-                    return JsonNodeType.Integer;
-                case "Double":
-                    return JsonNodeType.Float;
-                case "String":
-                    return JsonNodeType.String;
-                case "Boolean":
-                    return JsonNodeType.Boolean;
-                case "DList":
-                    return JsonNodeType.NodeList;
-                case "DMap":
-                    return JsonNodeType.Dictionary;
-                default:
-                    throw new ArgumentException("Wrong DObject type: " + vtname);
-            }
+
+            JsonNodeType result;
+            var vt = m_value.GetType();
+            if (_node_type_map.TryGetValue(vt, out result))
+                return result;
+
+            throw new ArgumentException("Wrong DObject type: " + vt.Name);
         }
 
-		public bool IsNull() => m_value == null;
+		public bool IsNull => m_value == null;
 
-        public bool IsInt() => m_value is long;
+        public bool IsInt => m_value is long;
 
-        public bool IsFloat() => m_value is double;
+        public bool IsFloat => m_value is double;
 
-        public bool IsBool() => m_value is bool;
+        public bool IsBool => m_value is bool;
 
-        public bool IsString() => m_value is string;
+        public bool IsString => m_value is string;
 
-        public bool IsList() => m_value is DList;
+        public bool IsList => m_value is DList;
 
-        public bool IsMap() => m_value is DMap;
+        public bool IsMap => m_value is DMap;
 
-		public DList List() => (DList)m_value;
+		public DList List => (DList)m_value;
 
-		public DMap Map() => (DMap)m_value;
+		public DMap Map => (DMap)m_value;
 
         public JsonNode ToJson() => ExportJson(this);
 
@@ -333,15 +333,18 @@ namespace Nano.Nuts
 
 		#region 集合成员
 
-		public int Count()
+		public int Count
 		{
-			if (m_value is DList)
-				return ((DList)m_value).Count;
-			else if (m_value is DMap)
-				return ((DMap)m_value).Count;
-			else
-				throw new InvalidCastException();
-		}
+            get
+            {
+                if (m_value is DList)
+                    return ((DList)m_value).Count;
+                else if (m_value is DMap)
+                    return ((DMap)m_value).Count;
+                else
+                    throw new InvalidCastException();
+            }
+        }
 
 		public DObject this[int index] => ((DList)m_value)[index];
 
@@ -520,21 +523,6 @@ namespace Nano.Nuts
 				default:
 					throw new InvalidCastException();
 			}
-		}
-
-		#endregion
-
-		#region Dynamic
-
-		public override bool TryGetMember(GetMemberBinder binder, out object result)
-		{
-			if (m_value is DMap)
-			{
-				var name = binder.Name;
-				result = ((DMap)m_value)[name];
-				return true;
-			}
-			return base.TryGetMember(binder, out result);
 		}
 
 		#endregion
