@@ -13,6 +13,7 @@ namespace Nano.Ext.Marshal
 	{
 		public string Name { get; }
 		public Dictionary<string, string> Attributes { get; }
+		public List<string> AttrNames { get; }
 		public List<OdlNode> Children { get; }
 		public string this[string key] => Attributes[key];
 
@@ -20,7 +21,8 @@ namespace Nano.Ext.Marshal
 		{
 			Name = name;
 			Attributes = new Dictionary<string, string>();
-			Children = new List<OdlNode>();
+            AttrNames = new List<string>();
+            Children = new List<OdlNode>();
 		}
 
 		public bool HasAttr(string key) => Attributes.ContainsKey(key);
@@ -33,9 +35,15 @@ namespace Nano.Ext.Marshal
 			return null;
 		}
 
-		public void AddNode(OdlNode node) => Children.Add(node);
+        public void AddNode(OdlNode node) => Children.Add(node);
 
-		public override string ToString() => "Node " + Name;
+        internal void AddAttr(string key, string value)
+        {
+            Attributes.Add(key, value);
+            AttrNames.Add(key);
+        }
+
+        public override string ToString() => "Node " + Name;
 	}
 
 	enum OdlSymbols
@@ -206,16 +214,16 @@ namespace Nano.Ext.Marshal
 						G.Verify(value.Length == 0 || value[value.Length - 1] != '/', "WrongSymbolInAttrValue");
 						pos = epos;
 					}
-					node.Attributes.Add(key, value);
+					node.AddAttr(key, value);
 				}
 				else if (ch == '/')
 				{
-					node.Attributes.Add(key, null);
+					node.AddAttr(key, null);
 					ExamContentAfterClosingSymbol(s, pos);
 					return true;
 				}
 				else if (ch <= ' ')
-					node.Attributes.Add(key, "");
+					node.AddAttr(key, "");
 				else
 					throw new NutsException("WrongSymbolAfterAttrKey");
 			}
@@ -237,13 +245,13 @@ namespace Nano.Ext.Marshal
 			if (pos2 >= pos && pos2 < s.Length && s[pos2] == '/' && s[pos2 - 1] <= 32)
 			{
 				var str = s.Substring(pos, pos2 - pos - 1).TrimEnd();
-                node.Attributes.Add(ident, str);
+                node.AddAttr(ident, str);
 				return true;
             }
 			else
 			{
                 var str = s.Substring(pos).TrimEnd();
-                node.Attributes.Add(ident, str);
+                node.AddAttr(ident, str);
 				return false;
             }
         }
@@ -264,7 +272,7 @@ namespace Nano.Ext.Marshal
 				pos = LexParser.EatSpaces(s, pos + 1);
 				var str = s.Substring(pos).TrimEnd();
 				var node = m_stack.Peek();
-				node.Attributes.Add(ident, str);
+				node.AddAttr(ident, str);
 				return;
 			}
 			else if (ch != '\0' && ch != '#')
@@ -281,7 +289,7 @@ namespace Nano.Ext.Marshal
 					{
 						// end of multi-line attribute
 						var node = m_stack.Peek();
-						node.Attributes.Add(ident, sb.ToString());
+						node.AddAttr(ident, sb.ToString());
 						return;
 					}
 				}
