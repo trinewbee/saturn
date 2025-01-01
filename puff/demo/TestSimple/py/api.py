@@ -1,18 +1,18 @@
 #encoding=utf8
 
 import json
-import urllib2
+import urllib.request
 
 def RequestUrl(url, data):
     try:
-        r = urllib2.urlopen(url, data)
+        r = urllib.request.urlopen(url, data.encode('utf-8') if data else None)
         cookies = r.headers.get("Set-Cookie")
         if cookies != None:
-            print "Set-Cookie: " + cookies
+            print ("Set-Cookie: ") + cookies
         data = r.read()
         r.close()
         return (r.code, data)
-    except urllib2.HTTPError, e:
+    except urllib.error.HTTPError as e:
         return (e.code, None)  
 
 def RequestApi(url, **kwargs):
