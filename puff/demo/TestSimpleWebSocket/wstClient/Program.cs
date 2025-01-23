@@ -38,13 +38,10 @@ class WebSocketTestClientApp
 		}
 	}
 
-	static async Task Invoke(ClientWebSocket ws, string url, Dictionary<string, object> args, long uid = 0)
+	static async Task Invoke(ClientWebSocket ws, string url, Dictionary<string, object> args)
 	{
 		args.Add("sc:m", url);
 		args.Add("sc:q", ++m_seq);
-		if (uid != 0)
-			args.Add("sc:id", uid);
-
 		var o = DObject.New(args);
 		var str = DObject.ExportJsonStr(o);
 		Console.WriteLine("REQ " + str);
@@ -80,8 +77,10 @@ class WebSocketTestClientApp
 				await Invoke(ws, "/api/ping", new());
 			else if (line == "hello")
 				await Invoke(ws, "/api/hello", new() { ["name"] = "Mandy", ["age"] = 12 });
+			else if (line == "login")
+				await Invoke(ws, "/api/login", new());
 			else if (line == "say")
-				await Invoke(ws, "/api/say", new(), uid: 3);
+				await Invoke(ws, "/api/say", new());
 			else
 				Console.WriteLine("Unknown command\r\n");
 		}

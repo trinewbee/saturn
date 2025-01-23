@@ -18,6 +18,9 @@ class TestApi
 	[IceApi(Ret = "m")]
 	public string Hello(string name, int age) => $"My name is {name}. I'm {age} yrs old.";
 
+	[IceApi(Ret = "sc:id")]
+	public long Login() => 3;
+
 	[IceApi()]
 	public void Say() => Echo(new() { 3 });
 }
