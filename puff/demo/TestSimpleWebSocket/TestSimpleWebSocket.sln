@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wstServer", "wstServer\wstServer.csproj", "{D55BADC0-9351-4E2A-B9A9-B1457437EB24}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PuffServer", "..\..\PuffServer\PuffServer.csproj", "{BD0EE9E2-02DD-4C95-874C-E574D6CEA360}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wstClient", "wstClient\wstClient.csproj", "{EBDBBB10-6139-4764-84E6-E43711093002}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D55BADC0-9351-4E2A-B9A9-B1457437EB24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D55BADC0-9351-4E2A-B9A9-B1457437EB24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D55BADC0-9351-4E2A-B9A9-B1457437EB24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D55BADC0-9351-4E2A-B9A9-B1457437EB24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD0EE9E2-02DD-4C95-874C-E574D6CEA360}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD0EE9E2-02DD-4C95-874C-E574D6CEA360}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD0EE9E2-02DD-4C95-874C-E574D6CEA360}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD0EE9E2-02DD-4C95-874C-E574D6CEA360}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBDBBB10-6139-4764-84E6-E43711093002}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBDBBB10-6139-4764-84E6-E43711093002}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBDBBB10-6139-4764-84E6-E43711093002}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBDBBB10-6139-4764-84E6-E43711093002}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
