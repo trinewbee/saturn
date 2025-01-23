@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using Nano.Json;
+using Nano.Logs;
 using Nano.Nuts;
 using Puff.Model;
 using Puff.Servers;
@@ -66,6 +67,7 @@ namespace TestSimple
             try
             {
                 smb.AddService(new TestApi());
+                Logger.Init("./logs/", null, false, 69206016);
                 smb.StartServer(portWeb: portWeb, portWebSock: portWebSock);
                 Console.WriteLine("Press enter key");
                 Console.ReadLine();

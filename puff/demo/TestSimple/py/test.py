@@ -3,7 +3,7 @@
 from api import *
 
 def TestBasic():
-    print "TestBasic"
+    print ("TestBasic")
 
     r = Ping()
     assert r["stat"] == "ok"
@@ -40,4 +40,4 @@ def TestBasic():
 
 if __name__ == '__main__':
     TestBasic()
-    print "All done"
+    print ("All done")

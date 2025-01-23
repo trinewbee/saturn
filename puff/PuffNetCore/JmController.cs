@@ -23,6 +23,7 @@ namespace Puff.NetCore
         public MethodInfo MI;
         public IceApiAttribute Attr;
         public string StatKey;
+        public IceApiJsonRetFlag RetFlage;
         public string[] Rets;
         public string[] Cookies;
     }
@@ -54,12 +55,12 @@ namespace Puff.NetCore
             jm.StatKey = attr.Stat;
             jm.Rets = attr.Ret != null ? attr.Ret.Split(',') : new string[0];
             jm.Cookies = attr.Cookie?.Split(',');
-
+            jm.RetFlage = attr.JsonRetFlags;
             Check(jm);
 
             return jm;
         }
-
+       
         static void Check(JmMethod jm)
         {
             var flag = jm.Attr.Flags;

@@ -16,6 +16,12 @@ namespace Puff.NetCore
         Json, JsonIn, Http
     }
 
+    public enum IceApiJsonRetFlag
+    {
+        Data,
+        NoData
+    }
+
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public class IceApiAttribute : Attribute
     {
@@ -23,6 +29,7 @@ namespace Puff.NetCore
         public string Ret = null;
         public string Stat = "stat";
         public string Cookie = null;
+        public IceApiJsonRetFlag JsonRetFlags = IceApiJsonRetFlag.Data;
     }
 
     public interface IceApiRequest
@@ -134,25 +141,63 @@ namespace Puff.NetCore
         {
             var jn = BuildJsonStyleReturn(m, o);
             var r = new IceApiResponse { Json = jn };
-            r.Cookies = BuildJSR_Cookies(jn, m.Cookies);
+            r.Cookies = BuildJSR_Cookies(ParseJsonReturnFlage(m.RetFlage, jn), m.Cookies);
             return r;
         }
-
+        internal JsonNode ParseJsonReturnFlage(IceApiJsonRetFlag jnRetFlage, JsonNode jn)
+        {
+            if (jnRetFlage == IceApiJsonRetFlag.Data)
+                return jn["data"];
+            else
+                return jn;
+            
+        }
         internal JsonNode BuildJsonStyleReturn(JmMethod m, object o)
         {
+            
             var jn = BuildJSR_Main(o, m.Rets);
+            jn = BuildJsonStyleReturnFlage(m.RetFlage, jn);
             BuildJSR_AddStat(jn, m.StatKey, "ok");
             return jn;
+        }
+        internal JsonNode BuildJsonStyleReturnFlage(IceApiJsonRetFlag jnRetFlage, JsonNode jn)
+        {
+            if (jnRetFlage == IceApiJsonRetFlag.Data)
+            {
+                var mainJn = new JsonNode(JsonNodeType.Dictionary);
+                jn.Name = "data";
+                mainJn.AddChildItem(jn);
+                return mainJn;
+            }
+            else
+                return jn;
+            
         }
 
         internal JsonNode BuildJSR_Main(object o, params string[] names)
         {
+           
+            
             if (names == null || names.Length == 0)
-                return BuildJSR_NoRet(o);
+            {
+               return BuildJSR_NoRet(o);
+                //retJn.Name = "data";
+                //mainJn.AddChildItem(retJn);
+            }
+                
             else if (names.Length == 1)
+            {
                 return BuildJSR_OneRet(o, names);
+                //retJn.Name = "data";
+                //mainJn.AddChildItem(retJn);
+            }
+
             else
+            {
                 return BuildJSR_MultiRet(o, names);
+                //retJn.Name = "data";
+                //mainJn.AddChildItem(retJn);
+            }
         }
 
         internal static void BuildJSR_AddStat(JsonNode jn, string key, string stat)
