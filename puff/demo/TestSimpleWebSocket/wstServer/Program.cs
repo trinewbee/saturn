@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Nano.Logs;
 using Puff.Model;
 using Puff.Servers;
@@ -6,11 +7,19 @@ using Puff.Servers;
 [IceService(BaseUrl = "/api")]
 class TestApi
 {
+	public delegate void EchoDelegate(List<long> uids);
+
+	[IceNotify()]
+	public EchoDelegate Echo;
+
 	[IceApi()]
 	public void Ping() { }
 
 	[IceApi(Ret = "m")]
 	public string Hello(string name, int age) => $"My name is {name}. I'm {age} yrs old.";
+
+	[IceApi()]
+	public void Say() => Echo(new() { 3 });
 }
 
 static class WebSocketTestServerApp
