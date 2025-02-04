@@ -49,7 +49,7 @@ namespace Nano.Forms
 
         public static LinkLabel AddLinkHorz(Control parent, ref int x, int y, int w, int h, string text, string name = null, EventHandler onclick = null)
         {
-            var link = new LinkLabel { Text = text, Name = name };
+            var link = new LinkLabel { Text = text, Name = name, AutoSize = w == 0 };
             link.Location = new Point(x, y);
             link.Size = new Size(w, h);
             if (onclick != null)
