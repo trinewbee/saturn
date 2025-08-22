@@ -43,7 +43,7 @@ namespace Nano.Forms
     {
         protected Stack<ToolStripMenuItem> m_stack = new Stack<ToolStripMenuItem>();
 
-        protected abstract void AddToRoot(ToolStripMenuItem item);
+        protected abstract void AddToRoot(ToolStripItem item);
 
         public ToolStripMenuItem Add(string text, string name = null, Keys shortcut = Keys.None, EventHandler onclick = null)
         {
@@ -53,6 +53,15 @@ namespace Nano.Forms
             else
                 AddToRoot(item);
             return item;
+        }
+
+        public void AddSeparator()
+        {
+            var item = new ToolStripSeparator();
+            if (m_stack.Count != 0)
+                m_stack.Peek().DropDownItems.Add(item);
+            else
+                AddToRoot(item);
         }
 
         public ToolStripMenuItem Begin(string text, string name = null, Keys shortcut = Keys.None, EventHandler onclick = null)
@@ -69,7 +78,7 @@ namespace Nano.Forms
     {
         public MenuStrip Menu = new MenuStrip();
 
-        protected override void AddToRoot(ToolStripMenuItem item) => Menu.Items.Add(item);
+        protected override void AddToRoot(ToolStripItem item) => Menu.Items.Add(item);
 
         public void SetForm(Form form) => CMenu.SetForm(form, Menu);
     }
@@ -78,6 +87,6 @@ namespace Nano.Forms
     {
         public ContextMenuStrip Menu = new ContextMenuStrip();
 
-        protected override void AddToRoot(ToolStripMenuItem item) => Menu.Items.Add(item);
+        protected override void AddToRoot(ToolStripItem item) => Menu.Items.Add(item);
     }
 }
