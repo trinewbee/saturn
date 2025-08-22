@@ -1,16 +1,23 @@
 #encoding=utf8
 
 import json
-import urllib2
+import urllib.request
+import urllib.error
 
 def RequestRaw(url, headers = {}, data = None):
     try:        
-        request = urllib2.Request(url=url, headers=headers, data=data)
-        r = urllib2.urlopen(request)
+        # 在Python 3中，POST数据需要编码为bytes
+        if data and isinstance(data, str):
+            data = data.encode('utf-8')
+        request = urllib.request.Request(url=url, headers=headers, data=data)
+        r = urllib.request.urlopen(request)
         data = r.read()
         r.close()
+        # 解码响应数据
+        if isinstance(data, bytes):
+            data = data.decode('utf-8')
         return (r.code, r.headers, data)
-    except urllib2.HTTPError, e:
+    except urllib.error.HTTPError as e:
         return (e.code, None, None)
 
 def RequestHttp(url, headers = {}, data = None):
@@ -18,10 +25,10 @@ def RequestHttp(url, headers = {}, data = None):
     assert r[0] == 200
     return json.loads(r[2])
 
-server = "http://10.211.55.8:5000"
+server = "http://127.0.0.1:5000"
 
 if __name__ == "__main__":
-    print "TestHttp"
+    print("TestHttp")
     url = server + "/my/http"
 
     # GET    
@@ -69,4 +76,4 @@ if __name__ == "__main__":
     assert "Secret" in headers
     assert headers["Secret"] == "x-kuma"
 
-    print "ok"
+    print("ok")

@@ -55,7 +55,7 @@ namespace Puff.NetCore
         public const string CT_JsonUtf8 = "application/json; charset=utf-8";
         public const string CT_TextUtf8 = "text/plain; charset=utf-8";
         public const string CT_Binary = MIME_Binary;
-
+        public const string Request_ID_Header_Key = "x-request-id";
         public int HttpStatusCode = 200;
         public string ContentType = null;
         public Dictionary<string, string> Headers = null;
@@ -64,6 +64,11 @@ namespace Puff.NetCore
         public byte[] Data = null;
         public Dictionary<string, string> Cookies = null;
 
+        public IceApiResponse()
+        {
+            // add x-request-id
+            AddHeader(Request_ID_Header_Key, WebGlobal.curEnv == null ? "": WebGlobal.curEnv.reqId);
+        }
         public void AddHeader(string key, string value)
         {
             if (Headers == null)

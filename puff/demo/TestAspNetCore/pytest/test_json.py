@@ -1,16 +1,23 @@
 #encoding=utf8
 
 import json
-import urllib2
+import urllib.request
+import urllib.error
 
 def RequestRaw(url, headers = {}, data = None):
     try:        
-        request = urllib2.Request(url=url, headers=headers, data=data)
-        r = urllib2.urlopen(request)
+        # 在Python 3中，POST数据需要编码为bytes
+        if data and isinstance(data, str):
+            data = data.encode('utf-8')
+        request = urllib.request.Request(url=url, headers=headers, data=data)
+        r = urllib.request.urlopen(request)
         data = r.read()
         r.close()
+        # 解码响应数据
+        if isinstance(data, bytes):
+            data = data.decode('utf-8')
         return (r.code, r.headers, data)
-    except urllib2.HTTPError, e:
+    except urllib.error.HTTPError as e:
         return (e.code, None, None)
 
 def RequestApi(url, **kwargs):
@@ -25,10 +32,10 @@ def RequestApiObj(url, obj):
     assert r[0] == 200
     return json.loads(r[2])
 
-server = "http://10.211.55.8:5000"
+server = "http://127.0.0.1:5000"
 
 if __name__ == "__main__":
-    print "TestJson"
+    print("TestJson")
 
     # Plain GET
     url = server + "/my/ping"
@@ -99,4 +106,4 @@ if __name__ == "__main__":
     assert response[0] == 200 
     assert response[2] == "wenliangjun! access 10.211.55.8:5000"
     
-    print "ok"    
+    print("ok")    

@@ -307,6 +307,11 @@ namespace Puff.NetCore
     {
         JmModule _jmod;
 
+        /// <summary>
+        /// 基于特性的中间件管道实例
+        /// </summary>
+        protected virtual IMiddlewarePipeline MiddlewarePipeline { get; } = new AttributeBasedMiddlewarePipeline();
+
         protected JmController()
         {
             _jmod = JmGlobal.Retrieve(GetType());
@@ -331,9 +336,30 @@ namespace Puff.NetCore
                     Logger.Err("VerbNotFound", "Url=" + verb);
                     WebGlobal.curEnv.stat = "VerbNotFound";
                     response = IceApiResponse.Error("VerbNotFound", verb);
+                    _AccessLog(env);
+                    return response;
                 }
 
-                response = JmWebInvoker.Invoke(jm, this, Request);
+                // 创建中间件上下文
+                var context = new PuffContext(env, jm, this, Request);
+                
+                // 执行中间件管道（如果没有配置中间件，这里是空操作）
+                var shouldContinue = MiddlewarePipeline.Invoke(context, () =>
+                {
+                    // 执行原有的业务逻辑（与之前完全一致）
+                    // 使用内部方法获取原始 JmMethod，保持框架内部的完整功能
+                    var puffContext = context as PuffContext;
+                    context.Response = JmWebInvoker.Invoke(puffContext?.InternalMethod ?? jm, this, Request);
+                });
+                
+                if (!shouldContinue || context.IsAborted)
+                {
+                    response = context.Response ?? IceApiResponse.Error("RequestAborted");
+                    _AccessLog(env);
+                    return response;
+                }
+                
+                response = context.Response;
             }
             catch (TargetInvocationException e)
             {
