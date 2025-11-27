@@ -14,6 +14,12 @@ namespace Nano.Forms
         public Image Image;
     }
 
+    public interface ImageLibrayProviderConfig
+    {
+        HashSet<string> AcceptExts { get; }
+        Image Load(Stream stream, string name);
+    }
+
     public interface ImageLibraryProvider : IDisposable
     {
         void LoadImages(List<ImageClip> clips);
@@ -42,14 +48,13 @@ namespace Nano.Forms
 
     public class ImageLibraryFileTreeProvider : ImageLibraryProvider
     {
-        public delegate Image LoadImageStreamDelegate(Stream stream, string name);
-        public LoadImageStreamDelegate LoadImageStreamFilter = (stream, name) => ImageKit.LoadImage(stream);
-
         protected FileTreeAccess m_acc;
+        protected ImageLibrayProviderConfig m_config;
 
-        public ImageLibraryFileTreeProvider(FileTreeAccess acc)
+        public ImageLibraryFileTreeProvider(FileTreeAccess acc, ImageLibrayProviderConfig config)
         {
             m_acc = acc;
+            m_config = config;
         }
 
         public ImageLibraryFileTreeProvider(string path)
@@ -85,7 +90,7 @@ namespace Nano.Forms
         void LoadFile(List<ImageClip> clips, FileTreeItem fi, string path)
         {
             string ext = Path.GetExtension(fi.Name).ToLowerInvariant();
-            if (!(ext == ".jpg" || ext == ".jpeg"))
+            if (!m_config.AcceptExts.Contains(ext))
                 return;
 
             var clip = new FileTreeImageClip(clips.Count, path, fi, m_acc.SupportStream);
@@ -101,7 +106,7 @@ namespace Nano.Forms
 
             var _clip = (FileTreeImageClip)clip;
             using (var stream = ImageKit.ToStream(_clip.Item, _clip.SupportStream))
-                clip.Image = LoadImageStreamFilter(stream, _clip.Item.Name);
+                clip.Image = m_config.Load(stream, _clip.Item.Name);
         }
     }
 
