@@ -42,6 +42,9 @@ namespace Nano.Forms
 
     public class ImageLibraryFileTreeProvider : ImageLibraryProvider
     {
+        public delegate Image LoadImageStreamDelegate(Stream stream, string name);
+        public LoadImageStreamDelegate LoadImageStreamFilter = (stream, name) => ImageKit.LoadImage(stream);
+
         protected FileTreeAccess m_acc;
 
         public ImageLibraryFileTreeProvider(FileTreeAccess acc)
@@ -97,7 +100,8 @@ namespace Nano.Forms
                 return;
 
             var _clip = (FileTreeImageClip)clip;
-            clip.Image = ImageKit.LoadImage(_clip.Item, _clip.SupportStream);
+            using (var stream = ImageKit.ToStream(_clip.Item, _clip.SupportStream))
+                clip.Image = LoadImageStreamFilter(stream, _clip.Item.Name);
         }
     }
 

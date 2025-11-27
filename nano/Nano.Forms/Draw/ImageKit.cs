@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using Nano.Common;
 using Nano.Storage;
 
 namespace Nano.Forms
@@ -38,7 +37,7 @@ namespace Nano.Forms
 			return RotateFlipType.RotateNoneFlipNone;
 		}
 
-		public static Image LoadImage(Stream stream)
+        public static Image LoadImage(Stream stream)
 		{
 			var image = Bitmap.FromStream(stream);
 
@@ -48,7 +47,7 @@ namespace Nano.Forms
 			return image;
 		}
 
-		public static Image LoadImage(FileTreeItem item, bool supportStream)
+		public static Stream ToStream(FileTreeItem item, bool supportStream)
 		{
 			Stream istream;
 			if (!supportStream)
@@ -58,12 +57,10 @@ namespace Nano.Forms
 			}
 			else
 				istream = item.Open(false);
-
-			using (istream)
-				return LoadImage(istream);
+			return istream;
 		}
 
-		public static Image LoadImage(KeyValueAccess acc, string key)
+		public static Stream ToStream(KeyValueAccess acc, string key)
 		{
 			Stream istream;
 			if (!acc.SupportStream)
@@ -73,9 +70,7 @@ namespace Nano.Forms
 			}
 			else
 				istream = acc.OpenObject(key, false);
-
-			using (istream)
-				return LoadImage(istream);
+			return istream;
 		}
 
 		public static Image LoadImage(string path)
