@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,6 +12,12 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Puff.NetCore;
+using TestAspNetCore.Hubs;
+using TestAspNetCore.Services;
+using Puff.NetCore.SignalR;
+
+using Puff.NetCore.Swagger;
+using Microsoft.AspNetCore.SignalR;
 
 namespace TestAspNetCore
 {
@@ -40,6 +46,14 @@ namespace TestAspNetCore
                 options.OutputFormatters.Insert(0, new JmOutputFormatter());
             });
             mvcb.SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddSignalR().AddHubOptions<ChatHub>(options => {
+                 options.AddFilter<PuffHubFilter>();
+            });
+            services.AddSingleton<IChatService, ChatService>();
+
+            // Puff Swagger
+            services.AddPuffSwagger("TestAspNetCore", "v1");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,13 +71,17 @@ namespace TestAspNetCore
 
             // app.UseHttpsRedirection();
             //app.UseWebSockets(); // websocket support
+
+            // Enable Puff Swagger
+            app.UsePuffSwagger();
+
             app.UseRouting();
             //app.Use(WebSocketAdapter.WebSocketFilter); // websocket redirection
             //配置 WebSocket 终结点
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-               
+                endpoints.MapHub<ChatHub>("/chatHub");
             });
         }
 

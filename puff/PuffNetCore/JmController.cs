@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -469,7 +469,12 @@ namespace Puff.NetCore
 
     public class WebGlobal
     {
-        [ThreadStatic]
-        public static Env curEnv;
+        private static System.Threading.AsyncLocal<Env> _curEnv = new System.Threading.AsyncLocal<Env>();
+
+        public static Env curEnv
+        {
+            get => _curEnv.Value;
+            set => _curEnv.Value = value;
+        }
     }
 }

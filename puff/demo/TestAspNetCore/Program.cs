@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -24,7 +24,7 @@ namespace TestAspNetCore
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .ConfigureLogging(logging => logging.ClearProviders())
-                .UseUrls("http://0.0.0.0:5000")
+                .UseUrls("http://0.0.0.0:9000")
                 .UseStartup<Startup>();
     }
 }

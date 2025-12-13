@@ -14,7 +14,7 @@ namespace TestAspNetCore
         /// 公开API - 无需任何中间件
         /// </summary>
         [IceApi()]
-        public object GetPublicData()
+        object GetPublicData()
         {
             return new
             {
@@ -29,7 +29,7 @@ namespace TestAspNetCore
         /// </summary>
         [IceApi()]
         [RequireAuth]
-        public object GetUserData()
+        object GetUserData()
         {
             // 从中间件上下文获取用户信息（如果有的话）
             return new
@@ -46,7 +46,7 @@ namespace TestAspNetCore
         /// </summary>
         [IceApi()]
         [RateLimit(5)] // 每分钟最多5次请求
-        public object GetLimitedData()
+        object GetLimitedData()
         {
             return new
             {
@@ -62,7 +62,7 @@ namespace TestAspNetCore
         /// </summary>
         [IceApi()]
         [Audit(Action = "GetSensitiveData")]
-        public object GetSensitiveData()
+        object GetSensitiveData()
         {
             return new
             {
@@ -78,7 +78,7 @@ namespace TestAspNetCore
         [IceApi()]
         [RequireAuth]
         [Audit(Action = "GetSecureUserData")]
-        public object GetSecureUserData()
+        object GetSecureUserData()
         {
             return new
             {
@@ -102,7 +102,7 @@ namespace TestAspNetCore
         /// </summary>
         [IceApi()]
         [RateLimit(2)] // 每分钟最多2次上传（严格限流）
-        public object UploadFile()
+        object UploadFile()
         {
             return new
             {
@@ -118,7 +118,7 @@ namespace TestAspNetCore
         /// </summary>
         [IceApi()]
         [RateLimit(20)] // 每分钟最多20次下载
-        public object DownloadFile()
+        object DownloadFile()
         {
             return new
             {
@@ -134,7 +134,7 @@ namespace TestAspNetCore
         /// </summary>
         [IceApi()]
         [RateLimit(2)] // 更严格的限流：每分钟最多2次
-        public object UploadLargeFile()
+        object UploadLargeFile()
         {
             return new
             {
@@ -160,7 +160,7 @@ namespace TestAspNetCore
         [IceApi()]
         [RequireAuth]
         [Audit(Action = "AdminOperation")]
-        public object AdminOperation()
+        object AdminOperation()
         {
             return new
             {
@@ -178,7 +178,7 @@ namespace TestAspNetCore
         [RequireAuth]
         [Audit(Action = "SystemConfig")]
         [RateLimit(3)] // 每分钟最多3次配置操作
-        public object UpdateSystemConfig()
+        object UpdateSystemConfig()
         {
             return new
             {
@@ -194,15 +194,15 @@ namespace TestAspNetCore
     /// 演示类级别中间件的控制器 - 整个控制器需要认证和审计
     /// </summary>
     [Route("[controller]")]
-    [RequireAuth]  // 🏢 类级别：整个控制器都需要认证
-    [Audit(Action = "SecureControllerAccess")]  // 🏢 类级别：整个控制器的操作都会被审计
+    [RequireAuth]  //  类级别：整个控制器都需要认证
+    [Audit(Action = "SecureControllerAccess")]  // 类级别：整个控制器的操作都会被审计
     public class SecureAreaController : JmController
     {
         /// <summary>
         /// 继承类级别中间件：RequireAuth + Audit
         /// </summary>
         [IceApi()]
-        public object GetSecureInfo()
+        object GetSecureInfo()
         {
             return new
             {
@@ -218,7 +218,7 @@ namespace TestAspNetCore
         /// </summary>
         [IceApi()]
         [RateLimit(3)] // ⚡ 方法级别：加上限流
-        public object GetCriticalData()
+        object GetCriticalData()
         {
             return new
             {
@@ -234,7 +234,7 @@ namespace TestAspNetCore
         /// </summary>
         [IceApi()]
         [Audit(Action = "SpecificOperation")] // 📋 方法级别：覆盖类级别的审计配置
-        public object PerformSpecificOperation()
+        object PerformSpecificOperation()
         {
             return new
             {

@@ -1,31 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net8.0</TargetFrameworks>
     <Authors>Cloudhua</Authors>
     <PackageId>Cloudhua.PuffNetCore</PackageId>
     <Description>PuffServer是基于aspnet上开发的web应用服务</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.0.1</Version>
+    <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
+    <Version>2.1.0</Version>
   </PropertyGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
-    <Reference Include="Nano.Common">
-      <HintPath>..\..\..\shared\cs\netcoreapp3.1\Nano.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Nano.Extensive">
-      <HintPath>..\..\..\shared\cs\netcoreapp3.1\Nano.Extensive.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
-    <Reference Include="Nano.Common">
-      <HintPath>..\..\..\shared\cs\net6.0\Nano.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Nano.Extensive">
-      <HintPath>..\..\..\shared\cs\net6.0\Nano.Extensive.dll</HintPath>
-    </Reference>
-  </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
     <Reference Include="Nano.Common">
@@ -42,8 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Sentry" Version="2.1.6" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 
 </Project>
