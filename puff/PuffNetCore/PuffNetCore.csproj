@@ -7,7 +7,7 @@
     <Description>PuffServer是基于aspnet上开发的web应用服务</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
-    <Version>2.1.1</Version>
+    <Version>2.1.2</Version>
 
   </PropertyGroup>
 
