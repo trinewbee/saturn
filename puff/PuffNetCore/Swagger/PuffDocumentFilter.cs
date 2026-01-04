@@ -149,18 +149,45 @@ namespace Puff.NetCore.Swagger
                 swaggerDoc.Paths.Remove(key);
             }
 
-            // 2. Scan all JmController subclasses
-            var controllerTypes = Assembly.GetAssembly(typeof(JmController))
-                .GetTypes()
-                .Where(t => t.IsSubclassOf(typeof(JmController)) && !t.IsAbstract);
-
-            // Also check the entry assembly for controllers (e.g. the app using the framework)
-            var entryAssembly = Assembly.GetEntryAssembly();
-            if (entryAssembly != null && entryAssembly != Assembly.GetAssembly(typeof(JmController)))
+            // 2. Scan all JmController subclasses from all loaded assemblies
+            var scannedAssemblies = new HashSet<Assembly>();
+            var controllerTypes = new List<Type>();
+            
+            // Scan the Puff framework assembly
+            var puffAssembly = Assembly.GetAssembly(typeof(JmController));
+            if (puffAssembly != null)
             {
-                var appControllers = entryAssembly.GetTypes()
-                    .Where(t => t.IsSubclassOf(typeof(JmController)) && !t.IsAbstract);
-                controllerTypes = controllerTypes.Concat(appControllers);
+                scannedAssemblies.Add(puffAssembly);
+                controllerTypes.AddRange(GetJmControllerTypes(puffAssembly));
+            }
+
+            // Scan the entry assembly
+            var entryAssembly = Assembly.GetEntryAssembly();
+            if (entryAssembly != null && !scannedAssemblies.Contains(entryAssembly))
+            {
+                scannedAssemblies.Add(entryAssembly);
+                controllerTypes.AddRange(GetJmControllerTypes(entryAssembly));
+            }
+
+            // Scan all referenced assemblies from the entry assembly
+            if (entryAssembly != null)
+            {
+                foreach (var refAssemblyName in entryAssembly.GetReferencedAssemblies())
+                {
+                    try
+                    {
+                        var refAssembly = Assembly.Load(refAssemblyName);
+                        if (refAssembly != null && !scannedAssemblies.Contains(refAssembly))
+                        {
+                            scannedAssemblies.Add(refAssembly);
+                            controllerTypes.AddRange(GetJmControllerTypes(refAssembly));
+                        }
+                    }
+                    catch
+                    {
+                        // Ignore assemblies that cannot be loaded
+                    }
+                }
             }
 
             foreach (var controllerType in controllerTypes)
@@ -170,6 +197,23 @@ namespace Puff.NetCore.Swagger
 
             // 3. 简化框架类型的 Schema（只保留类型名称和描述）
             SimplifyFrameworkSchemas(swaggerDoc);
+        }
+
+        /// <summary>
+        /// 从程序集中获取所有 JmController 子类
+        /// </summary>
+        private IEnumerable<Type> GetJmControllerTypes(Assembly assembly)
+        {
+            try
+            {
+                return assembly.GetTypes()
+                    .Where(t => t.IsSubclassOf(typeof(JmController)) && !t.IsAbstract);
+            }
+            catch
+            {
+                // Ignore type loading errors
+                return Enumerable.Empty<Type>();
+            }
         }
 
         /// <summary>
@@ -320,58 +364,159 @@ namespace Puff.NetCore.Swagger
             // 从 XML 文档获取方法注释
             var methodSummary = GetMethodSummary(jmMethod.MI);
             
-            var operation = new OpenApiOperation
+            // 检测方法上的 HTTP 方法属性
+            var httpMethods = GetHttpMethods(jmMethod.MI);
+            
+            // 如果没有显式指定 HTTP 方法，默认同时支持 GET 和 POST
+            if (httpMethods.Count == 0)
             {
-                Tags = new List<OpenApiTag> { new OpenApiTag { Name = routePrefix } },
-                OperationId = $"{routePrefix}_{jmMethod.Name}",
-                Summary = methodSummary,  // 方法的 <summary> 注释
-                Responses = new OpenApiResponses()
-            };
+                httpMethods.Add(OperationType.Get);
+                httpMethods.Add(OperationType.Post);
+            }
 
-            // Request Body
-            if (jmMethod.Attr.Flags == IceApiFlag.Http)
+            var pathItem = swaggerDoc.Paths.ContainsKey(path) 
+                ? swaggerDoc.Paths[path] 
+                : new OpenApiPathItem();
+
+            // 为每个 HTTP 方法生成操作
+            foreach (var httpMethod in httpMethods)
             {
-                // Http mode - assumes raw request handling
-                if (string.IsNullOrEmpty(operation.Summary))
+                var operation = new OpenApiOperation
                 {
-                    operation.Summary = "Raw HTTP Handler";
+                    Tags = new List<OpenApiTag> { new OpenApiTag { Name = routePrefix } },
+                    OperationId = $"{routePrefix}_{jmMethod.Name}_{httpMethod.ToString().ToLowerInvariant()}",
+                    Summary = methodSummary,  // 方法的 <summary> 注释
+                    Responses = new OpenApiResponses()
+                };
+
+                // Request Body
+                if (jmMethod.Attr.Flags == IceApiFlag.Http)
+                {
+                    // Http mode - assumes raw request handling
+                    if (string.IsNullOrEmpty(operation.Summary))
+                    {
+                        operation.Summary = "Raw HTTP Handler";
+                    }
                 }
-            }
-            else
-            {
-                // JSON mode (default) or JsonIn
-                GenerateRequestBody(operation, context, jmMethod);
+                else
+                {
+                    // JSON mode (default) or JsonIn
+                    // GET 请求通常不使用 RequestBody，但 Puff 框架支持通过 query string 传递参数
+                    if (httpMethod == OperationType.Get)
+                    {
+                        // 对于 GET 请求，将参数作为 query parameters 处理
+                        GenerateQueryParameters(operation, context, jmMethod);
+                    }
+                    else
+                    {
+                        // POST 等其他方法使用 RequestBody
+                        GenerateRequestBody(operation, context, jmMethod);
+                    }
+                }
+
+                // Response
+                GenerateResponse(operation, context, jmMethod);
+
+                pathItem.AddOperation(httpMethod, operation);
             }
 
-            // Response
-            GenerateResponse(operation, context, jmMethod);
-
-            var pathItem = new OpenApiPathItem();
-            
-            // Determine HTTP verb. Puff generally uses POST for RPC style, but supports GET if specified?
-            // JmController._MethodDispatch has [HttpGet] and [HttpPost].
-            // Let's assume POST for all IceApis as they are typically RPC, but we can check attributes if needed.
-            // For now, mapping to POST as that's the primary channel for JSON args.
-            pathItem.AddOperation(OperationType.Post, operation);
-            
-            // Also map GET if it makes sense? Puff usually does POST for JSON args.
-            // If args are simple, maybe GET works via query string parsing in Puff?
-            // JmWebInvoker.ParseQueryMap parses query string.
-            // So GET is possible. Let's add both or just POST?
-            // The design doc example shows POST. Let's stick to POST for now to avoid clutter, 
-            // or add GET if it's a query-like method?
-            // Safe bet: POST.
-
-            if (swaggerDoc.Paths.ContainsKey(path))
-            {
-                // Merge operations if path exists (rare for RPC but possible)
-                var existing = swaggerDoc.Paths[path];
-                existing.AddOperation(OperationType.Post, operation);
-            }
-            else
+            if (!swaggerDoc.Paths.ContainsKey(path))
             {
                 swaggerDoc.Paths.Add(path, pathItem);
             }
+        }
+
+        /// <summary>
+        /// 检测方法上的 HTTP 方法属性（HttpGet, HttpPost, HttpPut, HttpDelete 等）
+        /// </summary>
+        private List<OperationType> GetHttpMethods(MethodInfo method)
+        {
+            var httpMethods = new List<OperationType>();
+
+            // 检查各种 HTTP 方法属性
+            if (method.GetCustomAttribute<HttpGetAttribute>() != null)
+                httpMethods.Add(OperationType.Get);
+            
+            if (method.GetCustomAttribute<HttpPostAttribute>() != null)
+                httpMethods.Add(OperationType.Post);
+            
+            if (method.GetCustomAttribute<HttpPutAttribute>() != null)
+                httpMethods.Add(OperationType.Put);
+            
+            if (method.GetCustomAttribute<HttpDeleteAttribute>() != null)
+                httpMethods.Add(OperationType.Delete);
+            
+            if (method.GetCustomAttribute<HttpPatchAttribute>() != null)
+                httpMethods.Add(OperationType.Patch);
+            
+            if (method.GetCustomAttribute<HttpHeadAttribute>() != null)
+                httpMethods.Add(OperationType.Head);
+            
+            if (method.GetCustomAttribute<HttpOptionsAttribute>() != null)
+                httpMethods.Add(OperationType.Options);
+
+            return httpMethods;
+        }
+
+        /// <summary>
+        /// 为 GET 请求生成 query parameters（从方法参数生成）
+        /// </summary>
+        private void GenerateQueryParameters(OpenApiOperation operation, DocumentFilterContext context, JmMethod jmMethod)
+        {
+            var parameters = jmMethod.MI.GetParameters();
+            if (parameters.Length == 0) return;
+
+            // 过滤掉框架自动注入的类型（这些不是用户传入的参数）
+            var businessParams = parameters
+                .Where(p => !NoReflectTypes.Contains(p.ParameterType) 
+                         && !IsFrameworkType(p.ParameterType))
+                .ToArray();
+
+            if (businessParams.Length == 0) return;
+
+            if (operation.Parameters == null)
+            {
+                operation.Parameters = new List<OpenApiParameter>();
+            }
+
+            foreach (var param in businessParams)
+            {
+                // 只支持简单类型作为 query parameter
+                if (IsSimpleType(param.ParameterType))
+                {
+                    var paramSchema = context.SchemaGenerator.GenerateSchema(param.ParameterType, context.SchemaRepository);
+                    operation.Parameters.Add(new OpenApiParameter
+                    {
+                        Name = param.Name,
+                        In = ParameterLocation.Query,
+                        Required = !IsNullable(param),
+                        Schema = paramSchema,
+                        Description = GetParameterDescription(param)
+                    });
+                }
+            }
+        }
+
+        /// <summary>
+        /// 判断参数是否可为 null
+        /// </summary>
+        private bool IsNullable(ParameterInfo param)
+        {
+            if (param.ParameterType.IsValueType)
+            {
+                return Nullable.GetUnderlyingType(param.ParameterType) != null;
+            }
+            return true; // 引用类型默认可为 null
+        }
+
+        /// <summary>
+        /// 获取参数的描述（从 XML 注释）
+        /// </summary>
+        private string GetParameterDescription(ParameterInfo param)
+        {
+            // 可以扩展从 XML 注释中获取参数描述
+            // 这里先返回 null，后续可以完善
+            return null;
         }
 
         private void GenerateRequestBody(OpenApiOperation operation, DocumentFilterContext context, JmMethod jmMethod)

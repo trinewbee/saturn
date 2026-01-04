@@ -23,7 +23,7 @@ namespace Puff.NetCore.SignalR
             var env = new Env(httpContext.Request);
             
             // 补充 SignalR 特有日志参数
-            env.AddLogParam("Transport", new Nano.Json.JsonNode( "SignalR"));
+            env.AddLogParam("Transport", new Nano.Json.JsonNode("SignalR"));
             env.AddLogParam("HubMethod", new Nano.Json.JsonNode(invocationContext.HubMethodName));
             env.AddLogParam("ConnectionId", new Nano.Json.JsonNode(invocationContext.Context.ConnectionId));
 
@@ -31,18 +31,22 @@ namespace Puff.NetCore.SignalR
             {
                 // 3. 执行 Hub 方法
                 var result = await next(invocationContext);
+                
+                // 设置状态为成功
+                env.stat = "ok";
                 return result;
             }
             catch (Exception ex)
             {
                 // 4. 统一异常日志记录
+                env.stat = ex is NutsException nutsEx ? nutsEx.Code : "SignalRError";
                 Logger.Err(env.reqId + "\tSignalR Error: " + ex.Message, ex.StackTrace);
                 throw;
             }
             finally
             {
-                // 5. 访问日志 (可选 - 这里简单打印一下，或者复用 JmController 中的 _AccessLog 逻辑，但 _AccessLog 是私有的)
-                // 这里暂时不调用 _AccessLog，以免涉及过多改动
+                // 5. 访问日志
+                AccessLogger.Log(env);
             }
         }
     }

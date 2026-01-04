@@ -402,34 +402,7 @@ namespace Puff.NetCore
 
         private void _AccessLog(Env env)
         {
-            char SEP = '\t';
-            StringBuilder sb = new StringBuilder();
-            sb.Append(env.ip);
-            sb.Append(SEP);
-            sb.Append(env.reqId);
-            sb.Append(SEP);
-            sb.Append(UnixTimestamp.GetUtcNowTimeValue() - env.startTime);
-            sb.Append(SEP);
-            sb.Append(env.request.Path);
-            sb.Append(SEP);
-            sb.Append(env.stat);
-            sb.Append(SEP);
-            sb.Append(FilterLog.Filter(env.postStr));
-            sb.Append(SEP);
-            sb.Append(FilterLog.Filter(env.queryStr));
-            if (env.logParams != null)
-            {
-                foreach (var param in env.logParams)
-                {
-                    sb.Append(SEP);
-                    var retJn = DObject.ImportJson(param.Value);
-                    var retStr = retJn.ToString();
-                    sb.Append(param.Key + ":");
-                    sb.Append(FilterLog.Filter(retStr));
-                }
-
-            }
-            Logger.Acc(null, sb.ToString());
+            AccessLogger.Log(env);
         }
         
     }
@@ -475,6 +448,50 @@ namespace Puff.NetCore
         {
             get => _curEnv.Value;
             set => _curEnv.Value = value;
+        }
+    }
+
+    /// <summary>
+    /// 访问日志工具类 - 用于统一记录 HTTP 和 SignalR 请求的访问日志
+    /// </summary>
+    public static class AccessLogger
+    {
+        /// <summary>
+        /// 记录访问日志
+        /// </summary>
+        /// <param name="env">环境对象</param>
+        public static void Log(Env env)
+        {
+            if (env == null)
+                return;
+
+            char SEP = '\t';
+            StringBuilder sb = new StringBuilder();
+            sb.Append(env.ip);
+            sb.Append(SEP);
+            sb.Append(env.reqId);
+            sb.Append(SEP);
+            sb.Append(UnixTimestamp.GetUtcNowTimeValue() - env.startTime);
+            sb.Append(SEP);
+            sb.Append(env.request?.Path ?? "-");
+            sb.Append(SEP);
+            sb.Append(env.stat);
+            sb.Append(SEP);
+            sb.Append(FilterLog.Filter(env.postStr));
+            sb.Append(SEP);
+            sb.Append(FilterLog.Filter(env.queryStr));
+            if (env.logParams != null)
+            {
+                foreach (var param in env.logParams)
+                {
+                    sb.Append(SEP);
+                    var retJn = DObject.ImportJson(param.Value);
+                    var retStr = retJn.ToString();
+                    sb.Append(param.Key + ":");
+                    sb.Append(FilterLog.Filter(retStr));
+                }
+            }
+            Logger.Acc(null, sb.ToString());
         }
     }
 }
