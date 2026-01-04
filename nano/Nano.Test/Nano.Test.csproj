@@ -3,6 +3,10 @@
   <PropertyGroup>
     <TargetFrameworks>net48;net6.0;net8.0</TargetFrameworks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Version>1.0.0</Version>
+     <PackageId>Kuma.Nano.Test</PackageId>
+    <Authors>kuma</Authors>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

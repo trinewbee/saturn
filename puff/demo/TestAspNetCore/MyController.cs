@@ -110,6 +110,7 @@ namespace TestAspNetCore
             {
                 if (context.WebSockets.IsWebSocketRequest)
                 {
+                    Console.WriteLine("WebSocket request");
                     var ws = await context.WebSockets.AcceptWebSocketAsync();
                     await WebSocketAdapter.Echo(context, ws);
                 }

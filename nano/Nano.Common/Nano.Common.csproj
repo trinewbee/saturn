@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFrameworks>net48;net6.0;net8.0</TargetFrameworks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <PackageId>Cloudhua.Puff.Nano.Common</PackageId>
-    <Authors>Cloudhua</Authors>
+    <PackageId>Kuma.Nano.Common</PackageId>
+    <Authors>kuma</Authors>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>2.0.1</Version>

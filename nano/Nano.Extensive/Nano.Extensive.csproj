@@ -4,8 +4,8 @@
     <TargetFrameworks>net48;net6.0;net8.0</TargetFrameworks>
     <Version>2.0.1</Version>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <PackageId>Cloudhua.Puff.Nano.Extensive</PackageId>
-    <Authors>Cloudhua</Authors>
+    <PackageId>Kuma.Nano.Extensive</PackageId>
+    <Authors>kuma</Authors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   

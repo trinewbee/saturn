@@ -36,3 +36,6 @@ nano/android/Nano.Sockets/Sockets/
 nano/android/Nano.Sockets/websocket/
 nano/android/Nano.Xapi/Netdisk/
 /puff/demo/TestAspNetCore/logs
+
+# macos
+.DS_Store
