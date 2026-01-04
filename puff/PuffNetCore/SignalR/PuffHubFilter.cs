@@ -24,7 +24,6 @@ namespace Puff.NetCore.SignalR
             
             // 补充 SignalR 特有日志参数
             env.AddLogParam("Transport", new Nano.Json.JsonNode("SignalR"));
-            env.AddLogParam("HubMethod", new Nano.Json.JsonNode(invocationContext.HubMethodName));
             env.AddLogParam("ConnectionId", new Nano.Json.JsonNode(invocationContext.Context.ConnectionId));
 
             try
