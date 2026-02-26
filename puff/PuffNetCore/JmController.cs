@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using Microsoft.AspNetCore.Http;
@@ -482,7 +483,7 @@ namespace Puff.NetCore
             sb.Append(FilterLog.Filter(env.queryStr));
             if (env.logParams != null)
             {
-                foreach (var param in env.logParams)
+                foreach (var param in env.logParams.ToList())
                 {
                     sb.Append(SEP);
                     var retJn = DObject.ImportJson(param.Value);
