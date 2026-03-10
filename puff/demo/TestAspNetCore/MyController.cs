@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.WebSockets;
@@ -41,7 +41,7 @@ namespace TestAspNetCore
         string GetHost(HttpRequest request) 
         {
 
-            WebGlobal.curEnv.logParams.Add("test", DObject.New(new Dictionary<string, object>() { { "x", request.Host.Value } }).ToJson() );
+            WebGlobal.curEnv.AddLogParam("test", DObject.New(new Dictionary<string, object>() { { "x", request.Host.Value } }).ToJson() );
             return request.Host.Value; 
         }
 
