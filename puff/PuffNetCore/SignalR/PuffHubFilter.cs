@@ -44,8 +44,18 @@ namespace Puff.NetCore.SignalR
             }
             finally
             {
-                // 5. 访问日志
-                AccessLogger.Log(env);
+                // 5. 访问日志（异步执行，避免阻塞 SignalＲ管道）
+                _ = Task.Run(() =>
+                {
+                    try
+                    {
+                        AccessLogger.Log(env);
+                    }
+                    catch (Exception logEx)
+                    {
+                        Logger.Err($"[{env?.reqId ?? "unknown"}] Async AccessLogger failed", logEx.StackTrace);
+                    }
+                });
             }
         }
     }

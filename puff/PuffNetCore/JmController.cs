@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -134,7 +135,7 @@ namespace Puff.NetCore
 
     static class JmGlobal
     {
-        static Dictionary<Type, JmModule> Map = new Dictionary<Type, JmModule>();
+        static ConcurrentDictionary<Type, JmModule> Map = new ConcurrentDictionary<Type, JmModule>();
 
         public static MethodInBuilder Mib;
         public static MethodOutBuilder2 Mob;
@@ -149,14 +150,12 @@ namespace Puff.NetCore
 
         public static JmModule Retrieve(Type vt)
         {
-            JmModule jmod;
-            if (Map.TryGetValue(vt, out jmod))
+            return Map.GetOrAdd(vt, type =>
+            {
+                var jmod = new JmModule();
+                jmod.BuildJmMethodMap(type);
                 return jmod;
-
-            jmod = new JmModule();
-            jmod.BuildJmMethodMap(vt);
-            Map.Add(vt, jmod);
-            return jmod;
+            });
         }
     }
 
@@ -417,7 +416,7 @@ namespace Puff.NetCore
         public string queryStr;
         public string host;
         public HttpRequest request;
-        public Dictionary<string, JsonNode> logParams;
+        public ConcurrentDictionary<string, JsonNode> logParams;
         public Env(HttpRequest request)
         {
             startTime = UnixTimestamp.GetUtcNowTimeValue();
@@ -430,13 +429,13 @@ namespace Puff.NetCore
                 ip = request.HttpContext.Connection.RemoteIpAddress.ToString();
 
             //request.HttpContext.Headers.Add("X-ReqId", this.reqId);
-            logParams = new Dictionary<string, JsonNode>();
+            logParams = new ConcurrentDictionary<string, JsonNode>();
             WebGlobal.curEnv = this;
         }
 
         public void AddLogParam(string key, JsonNode param)
         {
-            logParams.Add(key, param);
+            logParams[key] = param;
         }
 
     }
@@ -481,13 +480,12 @@ namespace Puff.NetCore
             sb.Append(FilterLog.Filter(env.postStr));
             sb.Append(SEP);
             sb.Append(FilterLog.Filter(env.queryStr));
-            if (env.logParams != null)
+            if (env.logParams != null && env.logParams.Count > 0)
             {
-                foreach (var param in env.logParams.ToList())
+                foreach (var param in env.logParams)
                 {
                     sb.Append(SEP);
-                    var retJn = DObject.ImportJson(param.Value);
-                    var retStr = retJn.ToString();
+                    var retStr = param.Value?.ToString() ?? string.Empty;
                     sb.Append(param.Key + ":");
                     sb.Append(FilterLog.Filter(retStr));
                 }
