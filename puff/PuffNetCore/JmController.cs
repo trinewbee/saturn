@@ -485,7 +485,8 @@ namespace Puff.NetCore
                 foreach (var param in env.logParams)
                 {
                     sb.Append(SEP);
-                    var retStr = param.Value?.ToString() ?? string.Empty;
+                    var retJn = DObject.ImportJson(param.Value);
+                    var retStr = retJn.ToString();
                     sb.Append(param.Key + ":");
                     sb.Append(FilterLog.Filter(retStr));
                 }
